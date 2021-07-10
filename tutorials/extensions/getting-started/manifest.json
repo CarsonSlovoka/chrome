@@ -1,0 +1,37 @@
+{
+  "name": "Getting Started Example",
+  "description": "Build an Extension!",
+  "version": "1.0",
+  "manifest_version": 3,
+  // "minimum_chrome_version": 93, // 允許service_worker的文件不在root
+  "background": {
+    "service_worker": "background.js" // 在chrome93以下還是乖乖把頭文件放在root
+  },
+  "permissions": [
+    // https://developer.chrome.com/docs/extensions/reference/storage/
+    "storage", // https://developer.chrome.com/docs/extensions/reference/storage/
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "/src/tpl/popup.html",
+    "default_icon": {
+      /*
+      快速列所看到的圖標，您可以在指定與icons不同的圖片(如果是相同的就可以省略，預設會用icons的圖片)
+      目前測試過png可行，jpg不行
+
+      "16": "/src/static/img/get_started16.png",
+      "32": "/src/static/img/get_started32.png",
+      "48": "/src/static/img/get_started48.png"
+      "128": "/src/static/img/get_started128.png"
+      */
+    }
+  },
+  "icons": { // 擴充功能 或者 快速圖標(如果釘選的圖標忽略，這有設定就會用這個來取代) 所看到的圖標
+    "16": "/src/static/img/get_started16.png",
+    "32": "/src/static/img/get_started32.png",
+    "48": "/src/static/img/get_started48.png",
+    "128": "/src/static/img/get_started128.png"
+  },
+  "options_page": "/src/tpl/options.html"
+}
