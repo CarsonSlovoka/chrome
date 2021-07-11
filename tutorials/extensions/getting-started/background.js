@@ -5,6 +5,11 @@
     chrome.storage.sync.set({color}, // {color:color}
       () => { // options: function (可選項，可以省略)
         console.log(`Value is set to ${color}`)
+
+        // 👇 test locale
+        /*
+        const messageApp  = chrome.i18n.getMessage("app") // error // chrome.i18n.getMessage() is a sync method that needs to read files, so I guess it's not suitable for (async) service workers.
+         */
       }
     )
 

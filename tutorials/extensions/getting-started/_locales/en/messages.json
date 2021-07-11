@@ -1,0 +1,26 @@
+/*
+https://developer.chrome.com/docs/extensions/reference/i18n/
+
+messages.json. Only the // https://developer.chrome.com/docs/extensions/mv3/i18n-messages/
+  - "name"
+  - "message"
+fields are required.
+*/
+
+{
+  "name": { // only the "name" and "message" are required
+    "message": "name->message",
+    "description": "name->description",
+    "placeholders": {
+      "placeholder_name": {
+        "content": "name->placeholders->placeholder_name->content",
+        "example": "name->placeholders->placeholder_name->example"
+      }
+    }
+  },
+  "app": {
+    "message": "My cool APP.", // chrome.i18n.getMessage("app") // output: My cool APP.
+    "description": "description"
+  }
+}
+

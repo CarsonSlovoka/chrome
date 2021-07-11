@@ -9,6 +9,10 @@
 
 ## ★ [API Reference](https://developer.chrome.com/docs/extensions/reference/)
 
+- [chrome.i18n](https://developer.chrome.com/docs/extensions/reference/i18n/)
+- [manifest](https://developer.chrome.com/docs/extensions/mv3/manifest/#overview)
+- [messages.json](https://developer.chrome.com/docs/extensions/mv3/i18n-messages/#overview)
+
 很重要，讓您知道有那些API可以用
 
 #### Develop extensions and themes

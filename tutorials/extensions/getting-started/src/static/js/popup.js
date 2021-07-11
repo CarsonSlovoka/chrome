@@ -53,6 +53,8 @@ function setPageBackgroundColor() {
 }
 
 (() => {
+  const messageApp  = chrome.i18n.getMessage("app")
+  console.log( messageApp)
   const bgHandler = new BGHandler(document.getElementById("changeColor"))
   bgHandler.ListenClickEvent(setPageBackgroundColor)
 })()
