@@ -66,25 +66,28 @@ function setPageBackgroundColor() {
   chrome.commands.onCommand.addListener((cmdName) => {
     switch (cmdName) {
       case "show-alert":
-        /*
-        chrome.storage.sync.set({key: value}, function () {
-          console.log('Value is set to ' + value);
-        });
-
-        chrome.storage.sync.get(['key'], function (result) {
-          console.log('Value currently is ' + result.key);
-        });
-         */
-
         // window.alert(`Command: ${cmdName}`) // 這是顯示在popup.html
         // console.log("...") // 這也是在popup.html的視窗中
-
         const msg = cmdName
         chrome.storage.sync.set({msg})
         bgHandler.injectScript(() => {
           chrome.storage.sync.get(['msg'], ({msg})=> {
             console.log(`Command: ${msg}`)
             alert(`Command: ${msg}`)
+          })
+        })
+      break
+      case "show-alert-2": // 和show-alert是一樣的，只是show-alert有封裝，這個範例直接都用chrome的東西去弄
+        const msg2 = cmdName
+        chrome.storage.sync.set({msg2})
+        chrome.tabs.query({active: true, currentWindow: true}).then(([tab])=>{
+          chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            function: () => {
+              chrome.storage.sync.get(['msg2'], ({msg2})=> {
+                alert(`Command: ${msg2}`)
+              })
+            }
           })
         })
         break
