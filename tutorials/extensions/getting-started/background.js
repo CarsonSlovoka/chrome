@@ -27,5 +27,3 @@
     console.log(`Default background color set to ${color} green`) // 查看檢視模式中可以點開，就可以看到這段話
   })
 })()
-
-

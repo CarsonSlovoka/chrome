@@ -34,9 +34,13 @@
   },
   // 👇 Optional
   // "minimum_chrome_version": 93, // 允許service_worker的文件不在root
+
+  // checklist: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/#api_checklist
   "background": {
+    // Replace background.page or background.scripts with ``background.service_worker``
     // 在chrome93以下還是乖乖把頭文件放在root
     "service_worker": "background.js"
+    // chrome.extension.getBackgroundPage(): https://developer.chrome.com/docs/extensions/reference/extension/#method-getBackgroundPage // null if the extension has no background page. // 但是v3好像已經把這個拿掉了: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/
   },
   "permissions": [
     // https://developer.chrome.com/docs/extensions/reference/storage/
@@ -47,6 +51,18 @@
   // https://developer.chrome.com/docs/extensions/reference/commands/
   // chrome://extensions/shortcuts // 如果熱鍵有問題，上這邊去更新(可能要先點一下，再更新才有用，真的超怪...)，如果還是不成功，把套件移除重裝再重開瀏覽器。
   "commands": {
+    "show-alert": {
+      "suggested_key": {
+        "default": "Alt+P"
+      },
+      "description": "show alert"
+    },
+    "undo": {
+      "suggested_key": {
+        "default": "Alt+U"
+      },
+      "description": "Set the background to the original."
+    },
     "_execute_action": {
       // https://developer.chrome.com/docs/extensions/reference/commands/#usage
       "suggested_key": {
