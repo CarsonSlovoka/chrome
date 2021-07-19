@@ -11,6 +11,7 @@
 
 - [chrome.i18n](https://developer.chrome.com/docs/extensions/reference/i18n/)
 - [manifest](https://developer.chrome.com/docs/extensions/mv3/manifest/#overview)
+  - icon: https://github.com/CarsonSlovoka/chrome/issues/3#issue-947710397
 - [messages.json](https://developer.chrome.com/docs/extensions/mv3/i18n-messages/#overview)
 
 很重要，讓您知道有那些API可以用

@@ -1,0 +1,181 @@
+<script>
+  /*
+  source from : https://gist.github.com/CarsonSlovoka/81195ea3c04edbaa02b35b0678aa7038
+  */
+
+  class SVG2IMG {
+    /**
+     * @param {HTMLCanvasElement} canvas
+     * @param {string} src "http://.../xxx.svg"  or "data:image/svg+xml;base64,${base64}"
+     * */
+    constructor(canvas, src) {
+      this.canvas = canvas;
+      this.context = this.canvas.getContext("2d")
+      this.src = src
+      this.addTextList = []
+    }
+
+    /**
+     * @param {HTMLElement} node
+     * @param {string} mediaType: https://en.wikipedia.org/wiki/Media_type#Common_examples_%5B10%5D
+     * @see https://en.wikipedia.org/wiki/List_of_URI_schemes
+     * */
+    static Convert2URIData(node, mediaType = 'data:image/svg+xml') {
+      const base64 = btoa(node.outerHTML)
+      return `${mediaType};base64,${base64}`
+    }
+
+    /**
+     * @param {string} text
+     * @param {int} x
+     * @param {int} y
+     * @param {"stroke"|"fill"} mode
+     * @param {string} size, "30px"
+     * @param {string} font, example: "Arial"
+     * @param {string} color, example: "#3ae016" or "yellow"
+     * @param {int} alpha, 0.0 (fully transparent) to 1.0 (fully opaque) // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Applying_styles_and_colors#transparency
+     * */
+    AddText(text, x, y, {mode = "fill", size = "32px", font = "Arial", color = "black", alpha = 1.0}) {
+      const drawFunc = (text, x, y, mode, font) => {
+        return () => {
+          const context = this.context
+          const originAlpha = context.globalAlpha
+          context.globalAlpha = alpha
+          context.font = `${size} ${font}`
+
+          switch (mode) {
+            case "fill":
+              context.fillStyle = color
+              context.fillText(text, x, y)
+              break
+            case "stroke":
+              context.strokeStyle = color
+              context.strokeText(text, x, y)
+              break
+            default:
+              throw Error(`Unknown mode:${mode}`)
+          }
+          context.globalAlpha = originAlpha
+        }
+      }
+      this.addTextList.push(drawFunc(text, x, y, mode, font))
+    }
+
+    /**
+     * @description When the build is finished, you can click the filename to download the PNG or mouse enters to copy PNG to the clipboard.
+     * */
+    Build(filename = "download.png") {
+      const img = new Image(/*this.canvas.width, this.canvas.height*/)
+      img.src = this.src
+      img.crossOrigin = "anonymous" // Fixes: Tainted canvases may not be exported
+
+      img.onload = (event) => {
+        this.context.drawImage(event.target, 0, 0)
+        for (const drawTextFunc of this.addTextList) {
+          drawTextFunc()
+        }
+
+        const a = document.createElement('a')
+        document.querySelector('body').append(a)
+        a.innerText = filename
+        a.download = filename
+
+        const quality = 1.0
+        a.href = this.canvas.toDataURL("image/png", quality)
+        a.append(this.canvas)
+      }
+
+      this.canvas.onmouseenter = (event) => {
+        document.featurePolicy.allowedFeatures() // Fixes: DOMException: The Clipboard API has been blocked because of a permissions policy applied to the current document
+        this.context.globalCompositeOperation = "destination-over" // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation // https://www.w3schools.com/tags/canvas_globalcompositeoperation.asp
+        this.context.fillStyle = "rgb(255,255,255)"
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
+        this.canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})])) // copy to clipboard // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/clipboard
+      }
+    }
+  }
+
+  class Canvas {
+
+    /**
+     * @description for do something like that: ``<canvas width="" height=""></>canvas>``
+     **/
+    constructor(w, h) {
+      const canvas = document.createElement("canvas")
+      document.querySelector(`body`).append(canvas)
+      this.canvas = canvas;
+      [this.canvas.width, this.canvas.height] = [w, h]
+    }
+
+    /**
+     * @description If your SVG is large, you may want to know which part is what you wanted.
+     * */
+    DrawGrid(step = 100) {
+      const ctx = this.canvas.getContext('2d')
+      const w = this.canvas.width
+      const h = this.canvas.height
+
+      // Draw the vertical line.
+      ctx.beginPath();
+      for (let x = 0; x <= w; x += step) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+      }
+      // set the color of the line
+      ctx.strokeStyle = 'rgba(255,0,0, 0.5)'
+      ctx.lineWidth = 1
+      ctx.stroke();
+
+      // Draw the horizontal line.
+      ctx.beginPath();
+      for (let y = 0; y <= h; y += step) {
+        ctx.moveTo(0, y)
+        ctx.lineTo(w, y)
+      }
+      ctx.strokeStyle = 'rgba(128, 128, 128, 0.5)'
+      ctx.lineWidth = 5
+      ctx.stroke()
+    }
+  }
+
+  function ImportFontAwesome() {
+    const range = document.createRange()
+    const frag = range.createContextualFragment(`
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/all.min.js" integrity="sha512-UwcC/iaz5ziHX7V6LjSKaXgCuRRqbTp1QHpbOJ4l1nw2/boCfZ2KlFIqBUA/uRVF0onbREnY9do8rM/uT/ilqw==" crossorigin="anonymous"/>
+`)
+    document.querySelector("head").append(frag)
+  }
+
+  (() => {
+    window.onload = () => {
+      // Exists SVG
+      ImportFontAwesome()
+      const range = document.createRange()
+      const iconClass = "fas fa-terminal"
+      const iconSizeArray = [16, 32, 48, 128] // https://developer.chrome.com/docs/extensions/mv3/manifest/icons/
+      const fragIcon = range.createContextualFragment(`<i class="${iconClass}" style="background-color:black;color:white"></i>`)
+      document.querySelector(`body`).append(fragIcon)
+
+      const observer = new MutationObserver((mutationRecordList, observer) => {
+        for (const mutation of mutationRecordList) {
+          switch (mutation.type) {
+            case "childList":
+              const targetSVG = mutation.target.querySelector(`svg`)
+              if (targetSVG !== null) {
+                for (const iconSize of iconSizeArray) {
+                  const canvas = new Canvas(iconSize, iconSize)
+                  const svg2img = new SVG2IMG(canvas.canvas, SVG2IMG.Convert2URIData(targetSVG))
+                  svg2img.Build(`${canvas.canvas.width}.png`)
+                }
+                targetSVG.remove()
+                observer.disconnect()
+                return
+              }
+          }
+        }
+      })
+      observer.observe(document.querySelector(`body`), {childList: true})
+    }
+  })()
+</script>
