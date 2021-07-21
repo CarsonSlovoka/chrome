@@ -7,10 +7,12 @@
     /**
      * @param {HTMLCanvasElement} canvas
      * @param {string} src "http://.../xxx.svg"  or "data:image/svg+xml;base64,${base64}"
+     * @param {"high" | "low" | "medium"} quality
      * */
-    constructor(canvas, src) {
+    constructor(canvas, src, {quality=undefined}) {
       this.canvas = canvas;
       this.context = this.canvas.getContext("2d")
+      quality ? this.context.imageSmoothingQuality = quality : "" // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/imageSmoothingQuality
       this.src = src
       this.addTextList = []
     }
@@ -68,9 +70,9 @@
       const img = new Image(/*this.canvas.width, this.canvas.height*/)
       img.src = this.src
       img.crossOrigin = "anonymous" // Fixes: Tainted canvases may not be exported
-
       img.onload = (event) => {
-        this.context.drawImage(event.target, 0, 0)
+        this.context.drawImage(event.target, 0, 0, this.canvas.width, this.canvas.height)
+
         for (const drawTextFunc of this.addTextList) {
           drawTextFunc()
         }
@@ -147,8 +149,23 @@
     document.querySelector("head").append(frag)
   }
 
+  function AddElem2Body(nodeName){
+    document.querySelector(`body`).append(document.createElement(nodeName))
+  }
+
   (() => {
-    window.onload = () => {
+    window.onload = async () => {
+
+      // Online
+      for (const iconSize of [16, 32, 48, 128]) {
+        const canvas = new Canvas(iconSize, iconSize)
+        const svg2img = new SVG2IMG(canvas.canvas, "https://image.flaticon.com/icons/png/512/3585/3585618.png", {quality:"high"})
+        svg2img.Build(`${canvas.canvas.width}.png`)
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+
+      AddElem2Body("br")
+
       // Exists SVG
       ImportFontAwesome()
       const range = document.createRange()
@@ -165,7 +182,7 @@
               if (targetSVG !== null) {
                 for (const iconSize of iconSizeArray) {
                   const canvas = new Canvas(iconSize, iconSize)
-                  const svg2img = new SVG2IMG(canvas.canvas, SVG2IMG.Convert2URIData(targetSVG))
+                  const svg2img = new SVG2IMG(canvas.canvas, SVG2IMG.Convert2URIData(targetSVG), {})
                   svg2img.Build(`${canvas.canvas.width}.png`)
                 }
                 targetSVG.remove()
