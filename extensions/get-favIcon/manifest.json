@@ -1,0 +1,20 @@
+{
+  "name": "FavIcon",
+  "description": "Get the favIcon from the tab",
+  "manifest_version": 3,
+  "version": "1.0",
+  "icons": {
+    "16": "static/image/favicon/16.png",
+    "32": "static/image/favicon/32.png",
+    "48": "static/image/favicon/48.png"
+  },
+  "action": {
+    "default_popup": "templates/popup.html"
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "permissions": [
+    "tabs"
+  ]
+}
