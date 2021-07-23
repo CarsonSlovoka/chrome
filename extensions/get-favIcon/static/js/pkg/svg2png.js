@@ -1,7 +1,7 @@
 export class SVG2IMG {
   /**
    * @param {HTMLCanvasElement} canvas
-   * @param {string} src "http://.../xxx.svg"  or "data:image/svg+xml;base64,${base64}"
+   * @param {string | Blob} src "http://.../xxx.svg"  or "data:image/svg+xml;base64,${base64}" or Blob
    * @param {"high" | "low" | "medium"} quality
    * */
   constructor(canvas, src, {quality=undefined}) {
@@ -63,12 +63,16 @@ export class SVG2IMG {
    * */
   async Build(parentNode, filename = "download.png") {
     const img = new Image(/*this.canvas.width, this.canvas.height*/)
-    img.src = this.src
+    img.src = this.src instanceof Blob ? URL.createObjectURL(this.src) : this.src
     img.crossOrigin = "anonymous" // Fixes: Tainted canvases may not be exported
 
     await new Promise(resolve=>{
       img.onload = (event) => {
-        this.ctx.drawImage(event.target, 0, 0, this.canvas.width, this.canvas.height)
+        const target = event.target
+        if (target.src.startsWith("blob")) {
+          URL.revokeObjectURL(target.src) // free memory
+        }
+        this.ctx.drawImage(target, 0, 0, this.canvas.width, this.canvas.height)
 
         for (const drawTextFunc of this.addTextList) {
           drawTextFunc()
@@ -96,6 +100,16 @@ export class SVG2IMG {
       this.canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})])) // copy to clipboard // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/clipboard
     }
   }
+}
+
+export async function Src2Blob(src) {
+  const response = await fetch(src)
+
+  if (!response.ok) {
+    const errMsg = await response.text()
+    throw Error(`${response.statusText} (${response.status}) | ${errMsg} `)
+  }
+  return await response.blob()
 }
 
 export class Canvas {
