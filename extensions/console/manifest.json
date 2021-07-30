@@ -34,5 +34,8 @@
         "default": "Alt+1"
       }
     }
+  },
+  "content_security_policy": { // https://content-security-policy.com/
+    // "extension_pages": "default-src 'self'; connect-src * data: blob: filesystem:; style-src 'self'; img-src 'self' data:; frame-src 'self' data:; font-src 'self' data:; media-src * data: blob: filesystem:;"
   }
 }

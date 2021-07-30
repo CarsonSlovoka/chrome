@@ -1,3 +1,5 @@
+import * as MathEval from "../pkg/math/math-eval.js"
+
 class CommandCenter {
   /**
    * @param {HTMLElement} node
@@ -33,7 +35,7 @@ class CommandCenter {
     const range = document.createRange()
 
     const frag = range.createContextualFragment(`<div class="mt-3">
-<img class="me-2" src="${favIconSRC}" alt="favIcon" style="max-width: 32px; max-height:32px"/><a tabindex="0" class="text-decoration-none">${text}</a>
+<img class="me-2 bg-white" src="${favIconSRC}" alt="" style="max-width: 32px; max-height:32px"/><a tabindex="0" class="text-decoration-none">${text}</a>
 </div>`)
 
     const a = frag.querySelector('a')
@@ -54,7 +56,13 @@ class CommandCenter {
   list() {
     chrome.windows.getAll({populate: true, windowTypes: ["normal", "panel", "app", "devtools"]}, (windowArray) => {
       windowArray.forEach(item => {
-        item.tabs.forEach(tab => {
+        item.tabs.sort( // Let the same icons be arranged together.
+          (a, b) => {
+            a.favIconUrl = a.favIconUrl?? ""
+            b.favIconUrl = b.favIconUrl?? ""
+            return a.favIconUrl.localeCompare(b.favIconUrl)
+          }
+        ).forEach(tab => { // sort((tab)=>tab.favIconUrl)
           this.addA(tab.title, tab.url, tab.windowId, tab.favIconUrl)
         })
       })
@@ -62,7 +70,7 @@ class CommandCenter {
   }
 
   showExistsTab(windowId, title) {
-    // chrome.windows.update(windowId, {focused: true}) // open the window. A window contains many tabs, so you can't open the tab by this command. It is for window control.
+    chrome.windows.update(windowId, {focused: true}) // Open the window. A window contains many tabs.
     chrome.tabs.query({title}, (tabs) => {
       tabs.forEach(tab => {
         chrome.tabs.update(tab.id, {active: true})
@@ -107,6 +115,10 @@ class CommandCenter {
       tbody.append(tr)
     }
     this.node.append(fragTable)
+  }
+
+  DoArithmetic(expressions) {
+    this.addP(`${MathEval.Parse(expressions)}`)
   }
 
   RunCmd(cmdName) {
@@ -155,9 +167,15 @@ class CommandCenter {
       // const cmdNameArray = Object.getOwnPropertyNames(cmdTable)
       const inputValue = input.value
 
+      if (inputValue.startsWith("=")) {
+        cmdObj.DoArithmetic(inputValue.slice(1))
+        return
+      }
+
       const cmdItem = validCmdNameList.find(({name, aliases}) => aliases === inputValue)
       if (cmdItem === undefined) {
         cmdObj.ShowErrMsg(`Unknown command: ${inputValue}`, "❌")
+        return
       }
 
       cmdObj.RunCmd(cmdItem.name)
