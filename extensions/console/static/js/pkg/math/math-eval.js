@@ -95,28 +95,31 @@ function parseVal(cursor) {
 
   const regex = /^(?<OpOrVar>[^\d.])?(?<Num>[\d.]*)/g
   const m = regex.exec(cursor.str.substr(startOffset))
-  if (m.groups.OpOrVar === undefined && m.groups.Num) {
-    cursor.pos = startOffset + m.groups.Num.length
+  if (m) {
+    const {groups: {OpOrVar, Num}} = m
+    if (OpOrVar === undefined && Num) {
+      cursor.pos = startOffset + Num.length
 
-    if (cursor.pos > startOffset) {
-      return parseFloat(cursor.str.substring(startOffset, startOffset + cursor.pos - startOffset))
+      if (cursor.pos > startOffset) {
+        return parseFloat(cursor.str.substring(startOffset, startOffset + cursor.pos - startOffset))
+      }
     }
-  }
 
-  if ("+-(".indexOf(m.groups.OpOrVar) !== -1) {
-    cursor.pos++
-    switch (m.groups.OpOrVar) {
-      case "+": // unary plus, for example: (+5)
-        return parseVal(cursor)
-      case "-":
-        return -(parseVal(cursor))
-      case "(":
-        const value = parseExpr(cursor)
-        if (cursor.PeekRightChar() === ")") {
-          cursor.MoveRight()
-          return value
-        }
-        throw ParseError("Parsing error: ')' expected")
+    if ("+-(".indexOf(OpOrVar) !== -1) {
+      cursor.pos++
+      switch (OpOrVar) {
+        case "+": // unary plus, for example: (+5)
+          return parseVal(cursor)
+        case "-":
+          return -(parseVal(cursor))
+        case "(":
+          const value = parseExpr(cursor)
+          if (cursor.PeekRightChar() === ")") {
+            cursor.MoveRight()
+            return value
+          }
+          throw new ParseError("Parsing error: ')' expected")
+      }
     }
   }
 
@@ -139,7 +142,7 @@ function parseVal(cursor) {
     // is a function
     const regex = /{(?<Para>[^{]*)}/gm
     const m = regex.exec(cursor.str.substring(cursor.pos))
-    if (m.groups.Para !== undefined) {
+    if (m && m.groups.Para !== undefined) {
       const paraString = m.groups.Para
       const para = paraString.split(',')
       cursor.MoveRight(paraString.length + 2) // 2 = { + }
@@ -181,9 +184,5 @@ function parseExpr(expr) {
 }
 
 export function Parse(str) {
-  try {
-    return parseExpr(str.replaceAll(" ", ""))
-  } catch (e) {
-    alert(e.message)
-  }
+  return parseExpr(str.replaceAll(" ", ""))
 }
