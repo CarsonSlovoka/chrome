@@ -16,9 +16,9 @@ class CommandCenter {
   constructor(node) {
     this.node = node
     this.cmdArray = [
-      new Cmd("list", ["list", "ls"], "Show the information of each tab.", () => this.list()),
-      new Cmd("cls", ["cls"], "<b>Clear</b> screen", () => this.cls()),
-      new Cmd("help", ["help", "h"], "Show all command lists.", () => this.help()),
+      new Cmd("list", ["list", "ls"], "Show the information of each tab.", () => this.List()),
+      new Cmd("cls", ["cls"], "<b>Clear</b> screen", () => this.Cls()),
+      new Cmd("help", ["help", "h"], "Show all command lists.", () => this.Help()),
       new Cmd("=", ["="], "Do Arithmetic",
         (expression) => {
           const argObj = ArgumentParser(expression)
@@ -26,7 +26,39 @@ class CommandCenter {
             return this.DoArithmetic(expression.replaceAll(" ", ""))
           }
           if (argObj.help || argObj.h) {
-            this.addElem("((1+e)*3/round{3.5})%2", "p", {})
+            // this.addElem("((1+e)*3/round{3.5})%2", "p", {})
+            this.addTable(["Operator", "Example"], [
+                ["<kbd>+</kbd>", "<code>1+2</code>=3"],
+                ["<kbd>-</kbd>", "<code>1-2</code>=-1"],
+                ["<kbd>*</kbd>", "<code>2*3</code>=6"],
+                ["<kbd>/</kbd>", "<code>6/3</code>=2"],
+                ["<kbd>%</kbd>", "<code>7%5</code>=2"],
+                ["<kbd>**</kbd>", "<code>2**3</code>=8"],
+              ]
+            )
+
+            this.addTable(["Variable", "Value"], [
+              ["<kbd>e</kbd>", `${Math.exp(1)}`],
+              ["<kbd>pi</kbd>", `${Math.atan2(0, -1)}`],
+            ])
+
+            this.addTable(["Function", "Example"], [
+                ["<kbd>mod{x,y}</kbd>", "<code>mod{12,5}</code>=2"],
+                ["<kbd>pow{x,y}</kbd>", "<code>pow{2,3}</code>=8"],
+                ["<kbd>sqrt{x}</kbd>", "<code>sqrt{16}</code>=4"],
+                ["<kbd>round{x}</kbd>", "<code>round{3.5}</code>=4, <code>round{3.499}</code>=3"],
+                ["----", "----"],
+                ["<kbd>sin{x}</kbd>", `<code>sin{30}</code>${Math.sin(30 * (Math.PI / 180))}`],
+                ["<kbd>cos{x}</kbd>", `<code>cos{30}</code>${Math.cos(30 * (Math.PI / 180))}`],
+                ["<kbd>tan{x}</kbd>", `<code>tan{30}</code>${Math.tan(30 * (Math.PI / 180))}`],
+                ["<kbd>sec{x}</kbd>", `<code>sec{30}</code>${1 / Math.sin(30 * (Math.PI / 180))}`],
+                ["<kbd>csc{x}</kbd>", `<code>csc{30}</code>${1 / Math.cos(30 * (Math.PI / 180))}`],
+                ["<kbd>cot{x}</kbd>", `<code>cot{30}</code>${1 / Math.tan(30 * (Math.PI / 180))}`],
+                ["----", "----"],
+                ["<kbd>ln{x}</kbd>", `<code>ln{2.718281828459045}</code>${Math.log(Math.exp(1))}`], // do not support ln{e} i.e. The parameter is variable doesn't support.
+                ["<kbd>log10{x}</kbd>", `<code>log10{100}</code>${Math.log10(100)}`],
+              ]
+            )
           }
         }
       ),
@@ -62,7 +94,38 @@ class CommandCenter {
     this.node.append(frag)
   }
 
-  list() {
+  addTable(headerArray, rowArray) {
+    const range = document.createRange()
+
+    let theadData = ""
+    headerArray.forEach(header => theadData += `<th>${header}</th>`)
+
+    const fragTable = range.createContextualFragment(`
+    <table class="mt-2 table table-sm table-gray table-hover table-striped bg-white">
+    <thead>
+        <tr>
+            ${theadData}
+        </tr>
+    </thead>
+    <tbody></tbody>
+    </table>
+    `)
+
+    const tbody = fragTable.querySelector(`tbody`)
+    /* document.createRange().createContextualFragment(`<th><td>${item.description}</td><td>${item.aliases.join(",")}</td></th>`) <-- doesn't work https://stackoverflow.com/q/43102944/9935654 */
+    for (const rowData of rowArray) {
+      const tr = document.createElement("tr")
+      for (const colCell of rowData) {
+        const td = document.createElement("td")
+        td.innerHTML = colCell
+        tr.append(td)
+      }
+      tbody.append(tr)
+    }
+    this.node.append(fragTable)
+  }
+
+  List() {
     chrome.windows.getAll({populate: true, windowTypes: ["normal", "panel", "app", "devtools"]}, (windowArray) => {
       windowArray.forEach(item => {
         item.tabs.sort( // Let the same icons be arranged together.
@@ -87,43 +150,18 @@ class CommandCenter {
     })
   }
 
-  cls() {
+  Cls() {
     this.node.querySelectorAll('*').forEach(e => e.remove())
   }
 
-  help() {
-    const range = document.createRange()
-    const fragTable = range.createContextualFragment(`
-    <table class="table table-sm table-gray table-hover table-striped bg-white">
-    <thead>
-      <tr>
-        <th>Desc.</th>
-        <th>Available commands</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-    </table>
-    `)
-    const tbody = fragTable.querySelector(`tbody`)
+  Help() {
+    const rowArray = []
     for (const cmd of this.cmdArray) {
-      /* doesn't work https://stackoverflow.com/q/43102944/9935654
-      const trFrag = document.createRange().createContextualFragment(`<th>
-<td>${item.description}</td>
-<td>${item.aliases.join(",")}</td>
-</th>`)
-       */
-      const tr = document.createElement("tr")
-      const tdDesc = document.createElement("td")
-      const tdHotkey = document.createElement("td")
-      tdDesc.innerHTML = cmd.description
-
       let hotkeyString = ""
       cmd.aliases.forEach(aliases => hotkeyString += `<kbd>${aliases}</kbd>  `) // <code>
-      tdHotkey.innerHTML = hotkeyString // hotkeyString.slice(0, -1) // remove last character
-      tr.append(tdDesc, tdHotkey)
-      tbody.append(tr)
+      rowArray.push([cmd.description, hotkeyString])
     }
-    this.node.append(fragTable)
+    this.addTable(["Desc", "Available commands"], rowArray)
   }
 
   DoArithmetic(expressions) {

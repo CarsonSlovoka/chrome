@@ -36,9 +36,21 @@ const OpArray = [
 const VarTable = {
   e: Math.exp(1),
   pi: Math.atan2(0, -1), // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2
+
+  mod: (x, y) => x % y,
   pow: (x, y) => Math.pow(x, y),
   sqrt: (x) => Math.sqrt(x),
   round: (x) => Math.round(x),
+
+  sin: (x) => Math.sin(x * (Math.PI / 180)), // x degree -> radius
+  cos: (x) => Math.cos(x * (Math.PI / 180)),
+  tan: (x) => Math.tan(x * (Math.PI / 180)),
+  sec: (x) => 1/Math.sin(x * (Math.PI / 180)), // 1/sin
+  csc: (x) => 1/Math.cos(x * (Math.PI / 180)),
+  cot: (x) => 1/Math.tan(x * (Math.PI / 180)),
+
+  ln: (x) => Math.log(x),
+  log10: (x) => Math.log10(x)
 }
 
 /**
