@@ -75,20 +75,31 @@ class CommandCenter {
     }
   }
 
-  addA(text, href, windowId, favIconSRC) {
-    const frag = this.addElem(`<img class="me-2 bg-white" src="${favIconSRC}" alt="" style="max-width: 32px; max-height:32px"/><a tabindex="0" class="text-decoration-none">${text}</a>`,
+  addTabInfo(tab) {
+    const frag = this.addElem(`<img class="me-2 bg-white" src="${tab.favIconUrl}" alt="" style="max-width: 32px; max-height:32px"/>
+<a tabindex="0" class="text-decoration-none">${tab.title}</a>
+<small><button class="light-gray bg-red">Close</button></small>
+`,
       "div", {className: "mt-3", needAppend: false})
 
     const a = frag.querySelector('a')
-    // a.href = href
+    const closeBtn = frag.querySelector('button')
+    const curFlag = frag.querySelector('div[class^="mt-3"]')
     a.onclick = () => {
-      this.showExistsTab(windowId, text)
+      this.showExistsTab(tab)
     }
 
     a.onkeyup = (keyboardEvent) => {
       if (keyboardEvent.key === "Enter") {
-        this.showExistsTab(windowId, text)
+        this.showExistsTab(tab)
       }
+    }
+
+    closeBtn.onclick = () => {
+      chrome.tabs.remove(tab.id, () => {
+        curFlag.remove()
+        }
+      )
     }
 
     this.node.append(frag)
@@ -135,15 +146,16 @@ class CommandCenter {
             return a.favIconUrl.localeCompare(b.favIconUrl)
           }
         ).forEach(tab => { // sort((tab)=>tab.favIconUrl)
-          this.addA(tab.title, tab.url, tab.windowId, tab.favIconUrl)
+          this.addTabInfo(tab)
         })
       })
     })
   }
 
-  showExistsTab(windowId, title) {
-    chrome.windows.update(windowId, {focused: true}) // Open the window. A window contains many tabs.
-    chrome.tabs.query({title}, (tabs) => {
+  showExistsTab(tab) {
+    chrome.windows.update(tab.windowId, {focused: true}) // Open the window. A window contains many tabs.
+    // chrome.tabs.update(tab.id, {active: true}) // <-- not working
+    chrome.tabs.query({title: tab.title}, (tabs) => {
       tabs.forEach(tab => {
         chrome.tabs.update(tab.id, {active: true})
       })
