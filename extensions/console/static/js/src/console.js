@@ -9,6 +9,21 @@ function Cmd(name, aliases = undefined, description, func = undefined) {
   this.func = func
 }
 
+function OpenURL(url) {
+  // window.open(url, '_blank').focus() // Not allowed to load local resource
+  // chrome.tabs.create({url: "file:///C:/xxx.file"})
+  chrome.tabs.create({url, active: true}, (tab) => { // callback
+    if (tab === undefined) {
+      return
+    }
+    chrome.windows.getLastFocused({windowTypes: ['normal', 'panel']}, // open the window
+      (window) => { // callback
+        chrome.windows.update(window.id, {focused: true})
+      }
+    )
+  })
+}
+
 class CommandCenter {
   /**
    * @param {HTMLElement} node
@@ -47,14 +62,14 @@ class CommandCenter {
                 ["<kbd>pow{x,y}</kbd>", "<code>pow{2,3}</code>=8"],
                 ["<kbd>sqrt{x}</kbd>", "<code>sqrt{16}</code>=4"],
                 ["<kbd>round{x}</kbd>", "<code>round{3.5}</code>=4, <code>round{3.499}</code>=3"],
-                ["----", "----"],
+                ["<hr>", "<hr>"],
                 ["<kbd>sin{x}</kbd>", `<code>sin{30}</code>${Math.sin(30 * (Math.PI / 180))}`],
                 ["<kbd>cos{x}</kbd>", `<code>cos{30}</code>${Math.cos(30 * (Math.PI / 180))}`],
                 ["<kbd>tan{x}</kbd>", `<code>tan{30}</code>${Math.tan(30 * (Math.PI / 180))}`],
                 ["<kbd>sec{x}</kbd>", `<code>sec{30}</code>${1 / Math.sin(30 * (Math.PI / 180))}`],
                 ["<kbd>csc{x}</kbd>", `<code>csc{30}</code>${1 / Math.cos(30 * (Math.PI / 180))}`],
                 ["<kbd>cot{x}</kbd>", `<code>cot{30}</code>${1 / Math.tan(30 * (Math.PI / 180))}`],
-                ["----", "----"],
+                ["<hr>", "<hr>"],
                 ["<kbd>ln{x}</kbd>", `<code>ln{2.718281828459045}</code>${Math.log(Math.exp(1))}`], // do not support ln{e} i.e. The parameter is variable doesn't support.
                 ["<kbd>log10{x}</kbd>", `<code>log10{100}</code>${Math.log10(100)}`],
               ]
@@ -62,6 +77,56 @@ class CommandCenter {
           }
         }
       ),
+      new Cmd("chrome", ["chrome"], `Show some information about chrome.<br>Please use the <kbd>chrome -h</kbd> to see all full commands.`,
+        (expression) => {
+          const argObj = ArgumentParser(expression)
+
+          const showChromeHelp = () => {
+            this.addTable(["Commands", "Description"], [
+              [`<kbd data-click-open="chrome://about">chrome about</kbd>`, "<code>List</code> of Google URLs"],
+              [`<kbd data-click-open="chrome://version">chrome v</kbd>`, "<code>Version</code> of Google Chrome"],
+              [`<kbd data-click-open="chrome://settings">chrome settings</kbd>`, "<code>Settings</code> of Google Chrome"],
+              ["ext", "<hr>"],
+              [`<kbd data-click-open="chrome://extensions">chrome ext</kbd>`, "Manage the chrome <code>extensions</code>"],
+              [`<kbd data-click-open="chrome://extensions/shortcuts">chrome ext hotkey</kbd>`, "Open Chrome extensions shortcuts"],
+              ["media", "<hr>"],
+              // [`<button onclick="OpenURL('chrome://media-internals')">chrome media internals</button>`, ""], // Refused to execute inline script because it violates the following Content Security Policy directive ...
+              [`<kbd data-click-open="chrome://media-internals">chrome media internals</kbd>`, ""],
+              [`<kbd data-click-open="chrome://media-engagement">chrome media engagement</kbd>`, ""],
+              ["game", "<hr>"],
+              [`<kbd data-click-open="chrome://dino">chrome game dino</kbd>`, ""],
+            ])
+          }
+
+          if (argObj === undefined) {
+            let [cmdName, subCmd, ...others] = expression.trim().split(" ")
+            cmdName =
+              cmdName === "v" ? "version" :
+                cmdName === "ext" ? "extensions" :
+                  cmdName === "game" ? "" :
+                    cmdName === "media" ? "media" : cmdName
+
+            if (cmdName === undefined) {
+              this.ShowErrMsg(`Unknown command: ${expression}`, "❌")
+              showChromeHelp()
+              return
+            }
+
+            subCmd = subCmd === "hotkey" ? "/shortcuts" :
+              subCmd === "internals" ? `-${subCmd}` :
+                subCmd === "engagement" ? `-${subCmd}` :
+                  subCmd === undefined ? "" : subCmd
+
+            return OpenURL(`chrome://${cmdName}${subCmd}`)
+          }
+          if (argObj.help || argObj.h) {
+            showChromeHelp()
+            return
+          }
+          this.ShowErrMsg(`Unknown command: ${expression}`, "❌")
+          showChromeHelp()
+        }
+      )
     ]
   }
 
@@ -97,7 +162,7 @@ class CommandCenter {
 
     closeBtn.onclick = () => {
       chrome.tabs.remove(tab.id, () => {
-        curFlag.remove()
+          curFlag.remove()
         }
       )
     }
@@ -128,6 +193,15 @@ class CommandCenter {
       const tr = document.createElement("tr")
       for (const colCell of rowData) {
         const td = document.createElement("td")
+        const match = /data-(?<eventName>.*)-(?<actionName>.*)="(?<value>.*)"/g.exec(colCell)
+        if (match) {
+          const {groups: {eventName, actionName, value}} = match
+          td.addEventListener(eventName, () => {
+            if (actionName === "open") {
+              OpenURL(value)
+            }
+          })
+        }
         td.innerHTML = colCell
         tr.append(td)
       }
@@ -207,6 +281,12 @@ class CommandCenter {
     // Obj
     const cmdObj = new CommandCenter(document.querySelector(`section[data-name="message"]`))
 
+    const video = document.createElement("video")
+    video.src = "blob:https://ani.gamer.com.tw/87e5f1ee-396b-4544-8e92-2b08a3f8e818" // blob url
+    video.onload = () => {
+      document.querySelector(`section[data-name="message"]`).append(video)
+    }
+
     // DOM
     const input = document.querySelector(`input`)
     const commitBtn = document.querySelector(`button`)
@@ -223,17 +303,17 @@ class CommandCenter {
       const inputValue = input.value
 
       for (const cmd of cmdObj.cmdArray) {
-        if (cmd.aliases.find(aliases => inputValue.startsWith(aliases)) === undefined) {
-          continue
-        }
-        if (cmd.func !== undefined) {
-          cmd.func(inputValue.slice(cmd.aliases.length))
-          input.value = ""
-          return
+        for (const aliases of cmd.aliases) {
+          if (inputValue.startsWith(aliases) && cmd.func !== undefined) {
+            cmd.func(inputValue.slice(aliases.length))
+            input.value = ""
+            return
+          }
         }
       }
 
       cmdObj.ShowErrMsg(`Unknown command: ${inputValue}`, "❌")
+      cmdObj.Help()
     }
   }
 })()
