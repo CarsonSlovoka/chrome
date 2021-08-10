@@ -308,19 +308,99 @@ function CreateAutocomplete() {
   return new Autocomplete(document.querySelector(`div[data-com="autocomplete"]`), autocompleteTable)
 }
 
+class CMDHistory extends Array {
+
+  #maxNum
+  #curIndex
+
+  /**
+   * @param {HTMLInputElement} input
+   * @param {Number} maxNum
+   * @param {any} items
+   * */
+  constructor(input, maxNum, ...items) {
+    super(...items)
+    this.#maxNum = maxNum
+    this.#curIndex = 0
+    this.#initEventListener(input)
+  }
+
+  push(...items) {
+    if ((this.length + items.length) <= this.#maxNum) {
+      return super.push(...items)
+    }
+
+    items.forEach(item => {
+      const remain = this.#maxNum - this.length
+      let updateIndex = this.#curIndex
+      if (remain > 0) {
+        updateIndex = this.length
+      } else {
+        this.#updateIndex(++this.#curIndex)
+      }
+      this[updateIndex] = item
+    })
+  }
+
+  #updateIndex(indexNum) {
+    if (indexNum >= this.length) {
+      this.#curIndex = 0
+    } else if (indexNum < 0) {
+      this.#curIndex = (this.length - 1)
+    } else {
+      this.#curIndex = indexNum
+    }
+  }
+
+  #initEventListener(input) {
+    input.addEventListener("keyup", (keyboardEvent) => {
+      if (this.length === 0) {
+        return
+      }
+
+      if (input.parentNode.querySelector(`div [class="autocomplete-items"]`) !== null) {
+        return
+      }
+
+      let haveMatch = true
+      switch (keyboardEvent.key) {
+        case "ArrowDown":
+          this.#updateIndex(this.#curIndex + 1)
+          break
+
+        case "ArrowUp":
+          this.#updateIndex(this.#curIndex - 1)
+          break
+
+        default:
+          haveMatch = false
+      }
+
+      if (haveMatch) {
+        keyboardEvent.target.value = this[this.#curIndex]
+      }
+    })
+  }
+}
+
 (() => {
   // Autocomplete.HighlightColor = "#fae698"
   window.onload = () => {
 
+    // DOM
+    const input = document.querySelector(`input`)
+    const commitBtn = document.querySelector(`input[type="submit"]`)
+
     // Obj
     const cmdObj = new CommandCenter(document.getElementById(`msg-area`))
+    const cmdHistory = new CMDHistory(input, 20)
+    // cmdHistory.push([...Array(100).keys()]) // test push function
+
 
     // build autocompleteTable
     CreateAutocomplete()
 
-    // DOM
-    const input = document.querySelector(`input`)
-    const commitBtn = document.querySelector(`input[type="submit"]`)
+    // Event
     input.addEventListener("keydown", (keyboardEvent) => {
 
       if (keyboardEvent.key !== "Enter") {
@@ -341,13 +421,14 @@ function CreateAutocomplete() {
 
             cmd.func(inputValue.slice(aliases.length))
 
-            input.value = ""
             await new Promise(resolve => setTimeout(resolve, 1)) // wait process done.
 
             const msgNode = document.getElementById("msg-area")
             if (msgNode) {
               msgNode.scrollTop = msgNode.scrollHeight // scroll to bottom
             }
+            cmdHistory.push(input.value)
+            input.value = ""
             return
           }
         }
