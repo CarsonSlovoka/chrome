@@ -1,5 +1,8 @@
+'use strict';
+
 import * as MathEval from "../pkg/math/math-eval.js"
 import {ArgumentParser} from "../pkg/flag/argument-parser.js"
+import {Autocomplete} from "../pkg/com/autocomplete.js"
 
 
 function Cmd(name, aliases = undefined, description, func = undefined) {
@@ -41,7 +44,6 @@ class CommandCenter {
             return this.DoArithmetic(expression.replaceAll(" ", ""))
           }
           if (argObj.help || argObj.h) {
-            // this.addElem("((1+e)*3/round{3.5})%2", "p", {})
             this.addTable(["Operator", "Example"], [
                 ["<kbd>+</kbd>", "<code>1+2</code>=3"],
                 ["<kbd>-</kbd>", "<code>1-2</code>=-1"],
@@ -84,11 +86,11 @@ class CommandCenter {
           const showChromeHelp = () => {
             this.addTable(["Commands", "Description"], [
               [`<kbd data-click-open="chrome://about">chrome about</kbd>`, "<code>List</code> of Google URLs"],
-              [`<kbd data-click-open="chrome://version">chrome v</kbd>`, "<code>Version</code> of Google Chrome"],
+              [`<kbd data-click-open="chrome://version">chrome version</kbd>`, "<code>Version</code> of Google Chrome"],
               [`<kbd data-click-open="chrome://settings">chrome settings</kbd>`, "<code>Settings</code> of Google Chrome"],
               ["ext", "<hr>"],
-              [`<kbd data-click-open="chrome://extensions">chrome ext</kbd>`, "Manage the chrome <code>extensions</code>"],
-              [`<kbd data-click-open="chrome://extensions/shortcuts">chrome ext hotkey</kbd>`, "Open Chrome extensions shortcuts"],
+              [`<kbd data-click-open="chrome://extensions">chrome extensions</kbd>`, "Manage the chrome <code>extensions</code>"],
+              [`<kbd data-click-open="chrome://extensions/shortcuts">chrome extensions shortcuts</kbd>`, "Open Chrome extensions shortcuts"],
               ["media", "<hr>"],
               // [`<button onclick="OpenURL('chrome://media-internals')">chrome media internals</button>`, ""], // Refused to execute inline script because it violates the following Content Security Policy directive ...
               [`<kbd data-click-open="chrome://media-internals">chrome media internals</kbd>`, ""],
@@ -100,23 +102,26 @@ class CommandCenter {
 
           if (argObj === undefined) {
             let [cmdName, subCmd, ...others] = expression.trim().split(" ")
-            cmdName =
-              cmdName === "v" ? "version" :
-                cmdName === "ext" ? "extensions" :
-                  cmdName === "game" ? "" :
-                    cmdName === "media" ? "media" : cmdName
+            subCmd = subCmd ?? ""
 
-            if (cmdName === undefined) {
+            if (cmdName === undefined ||
+              (cmdName === "game" && subCmd === "")
+            ) {
               this.ShowErrMsg(`Unknown command: ${expression}`, "❌")
               showChromeHelp()
               return
             }
 
-            subCmd = subCmd === "hotkey" ? "/shortcuts" :
-              subCmd === "internals" ? `-${subCmd}` :
-                subCmd === "engagement" ? `-${subCmd}` :
-                  subCmd === undefined ? "" : subCmd
-
+            switch (cmdName) {
+              case "game":
+                cmdName = ""
+                break
+              case "media":
+                if (subCmd.length > 0) {
+                  subCmd = "-" + subCmd
+                }
+                break
+            }
             return OpenURL(`chrome://${cmdName}${subCmd}`)
           }
           if (argObj.help || argObj.h) {
@@ -141,7 +146,7 @@ class CommandCenter {
   }
 
   addTabInfo(tab) {
-    const frag = this.addElem(`<img class="me-2 bg-white" src="${tab.favIconUrl}" alt="" style="max-width: 32px; max-height:32px"/>
+    const frag = this.addElem(`<img class="bg-white" src="${tab.favIconUrl}" alt="" style="max-width: 32px; max-height:32px"/>
 <a tabindex="0" class="text-decoration-none">${tab.title}</a>
 <small><button class="light-gray bg-red">Close</button></small>
 `,
@@ -211,7 +216,7 @@ class CommandCenter {
   }
 
   List() {
-    chrome.windows.getAll({populate: true, windowTypes: ["normal", "panel", "app", "devtools"]}, (windowArray) => {
+    chrome.windows.getAll({populate: true, windowTypes: ["normal", "panel", "app"]}, (windowArray) => { // "devtools" is ``Inspect ctrl+shift+I``
       windowArray.forEach(item => {
         item.tabs.sort( // Let the same icons be arranged together.
           (a, b) => {
@@ -276,27 +281,55 @@ class CommandCenter {
   }
 }
 
-(() => {
-  window.onload = () => {
-    // Obj
-    const cmdObj = new CommandCenter(document.querySelector(`section[data-name="message"]`))
+function CreateAutocomplete() {
+  const autocompleteTable = {
+    [`<i class="fas fa-eraser"></i>cls`]: [],
+    [`<span>📋</span>list`]: [],
+    [`<span>📋</span>ls`]: [],
+    [`<i class="fab fa-chrome"></i>chrome`]: {
+      [`about<small>List of Chrome URLs</small>`]: [],
+      version: [],
+      settings: [],
 
-    const video = document.createElement("video")
-    video.src = "blob:https://ani.gamer.com.tw/87e5f1ee-396b-4544-8e92-2b08a3f8e818" // blob url
-    video.onload = () => {
-      document.querySelector(`section[data-name="message"]`).append(video)
-    }
+      [`<span>🔨</span>extensions<small>Manage your chrome extension.</small>`]: {
+        shortcuts: [],
+      },
+
+      media: {
+        internals: [],
+        engagement: [],
+      },
+
+      [`<span>🎮</span>game`]: [`<i class="fas fa-running"></i>dino<small>A small game for you to relax.</small>`]
+    },
+    [`<i class="fas fa-info-circle"></i>help`]: [],
+    [`<i class="fas fa-calculator"></i>=`]: [],
+  }
+  return new Autocomplete(document.querySelector(`div[data-com="autocomplete"]`), autocompleteTable)
+}
+
+(() => {
+  // Autocomplete.HighlightColor = "#fae698"
+  window.onload = () => {
+
+    // Obj
+    const cmdObj = new CommandCenter(document.getElementById(`msg-area`))
+
+    // build autocompleteTable
+    CreateAutocomplete()
 
     // DOM
     const input = document.querySelector(`input`)
-    const commitBtn = document.querySelector(`button`)
-    input.addEventListener("keyup", (keyboardEvent) => {
+    const commitBtn = document.querySelector(`input[type="submit"]`)
+    input.addEventListener("keydown", (keyboardEvent) => {
 
       if (keyboardEvent.key !== "Enter") {
         return
       }
       keyboardEvent.preventDefault()
-      commitBtn.click()
+      if (null === document.querySelector(`div[class="autocomplete-active"]`)) {
+        commitBtn.click()
+      }
     })
 
     commitBtn.onclick = (event) => {
