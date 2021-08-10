@@ -332,14 +332,22 @@ function CreateAutocomplete() {
       }
     })
 
-    commitBtn.onclick = (event) => {
+    commitBtn.onclick = async (event) => {
       const inputValue = input.value
 
       for (const cmd of cmdObj.cmdArray) {
         for (const aliases of cmd.aliases) {
           if (inputValue.startsWith(aliases) && cmd.func !== undefined) {
+
             cmd.func(inputValue.slice(aliases.length))
+
             input.value = ""
+            await new Promise(resolve => setTimeout(resolve, 1)) // wait process done.
+
+            const msgNode = document.getElementById("msg-area")
+            if (msgNode) {
+              msgNode.scrollTop = msgNode.scrollHeight // scroll to bottom
+            }
             return
           }
         }
