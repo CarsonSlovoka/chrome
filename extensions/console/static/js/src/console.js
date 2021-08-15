@@ -3,6 +3,7 @@
 import * as MathEval from "../pkg/math/math-eval.js"
 import {ArgumentParser} from "../pkg/flag/argument-parser.js"
 import {Autocomplete} from "../pkg/com/autocomplete.js"
+import * as Bookmarks from "../pkg/chrome/bookmarks/bookmarks.js"
 
 
 function Cmd(name, aliases = undefined, description, func = undefined) {
@@ -86,8 +87,10 @@ class CommandCenter {
           const showChromeHelp = () => {
             this.addTable(["Commands", "Description"], [
               [`<kbd data-click-open="chrome://about">chrome about</kbd>`, "<code>List</code> of Google URLs"],
+              [`<kbd data-click-open="chrome://bookmarks">chrome bookmarks</kbd>`, "manage the <code>bookmark</code>"],
               [`<kbd data-click-open="chrome://version">chrome version</kbd>`, "<code>Version</code> of Google Chrome"],
               [`<kbd data-click-open="chrome://settings">chrome settings</kbd>`, "<code>Settings</code> of Google Chrome"],
+              [`<kbd data-click-open="chrome://history">chrome history</kbd>`, "Web browsing <code>history</code>"]
               ["ext", "<hr>"],
               [`<kbd data-click-open="chrome://extensions">chrome extensions</kbd>`, "Manage the chrome <code>extensions</code>"],
               [`<kbd data-click-open="chrome://extensions/shortcuts">chrome extensions shortcuts</kbd>`, "Open Chrome extensions shortcuts"],
@@ -131,7 +134,41 @@ class CommandCenter {
           this.ShowErrMsg(`Unknown command: ${expression}`, "❌")
           showChromeHelp()
         }
-      )
+      ),
+      new Cmd("bookmarks", ["bk"], "to query the bookmark", async (expression) => {
+        const argObj = ArgumentParser(expression)
+
+        const showBookmarksHelp = () => {
+          this.addTable(["Commands", "Description"], [
+            [`<kbd data-click-typing='bk --dir -search=".*"'>bk --dir -search=".*"</kbd>`, "List all directory"],
+          ])
+        }
+
+        if (argObj === undefined || argObj.h || argObj.help) {
+          showBookmarksHelp()
+          return
+        }
+
+        // const regex = new RegExp(argObj.search ?? "", "i")
+
+        const showLayerInfo = (treeNode, parentTitle = "") => {
+          this.addElem(`<i class="me-2">${parentTitle}</i><code>${treeNode.title}</code>`, "p", {})
+          if (treeNode.children !== undefined) {
+            treeNode.children.forEach(subTree => {
+                const subTitle = parentTitle === "" ? treeNode.title
+                  : parentTitle + "<code>=></code>" + treeNode.title
+                showLayerInfo(subTree, subTitle)
+              }
+            )
+          }
+        }
+
+        /** @type {Array} */
+        const bookmarkTreeNode = await chrome.bookmarks.getTree()
+        bookmarkTreeNode.forEach(treeNode => {
+          showLayerInfo(treeNode)
+        })
+      })
     ]
   }
 
@@ -198,13 +235,20 @@ class CommandCenter {
       const tr = document.createElement("tr")
       for (const colCell of rowData) {
         const td = document.createElement("td")
-        const match = /data-(?<eventName>.*)-(?<actionName>.*)="(?<value>.*)"/g.exec(colCell)
+        const match = /data-(?<eventName>[a-z0-9]*)-(?<actionName>[a-z0-9]*)=['"](?<value>.*)['"]>/.exec(colCell)
         if (match) {
           const {groups: {eventName, actionName, value}} = match
           td.addEventListener(eventName, () => {
-            if (actionName === "open") {
-              OpenURL(value)
+            switch (actionName) {
+              case "open":
+                OpenURL(value)
+                break
+              case "typing":
+                const input = document.getElementById('user-input')
+                input.value = value
+                break
             }
+
           })
         }
         td.innerHTML = colCell
@@ -281,19 +325,32 @@ class CommandCenter {
   }
 }
 
-function CreateAutocomplete() {
+async function CreateAutocomplete() {
+
+  const bookmarkTree = await Bookmarks.GetTree()
+  const bookmarkTable = (Bookmarks.Tree2AutocompleteTable(bookmarkTree))[""]
+  const bookmarkFileArray = []
+  const bookmarkArray = []
+  Bookmarks.Tree2AutocompleteArray(bookmarkTree, bookmarkFileArray)
+  Bookmarks.Tree2AutocompleteArray(bookmarkTree, bookmarkArray, true)
+
   const autocompleteTable = {
+    [`<span>⭐</span>bk<small>Show the bookmark by hierarchy.</small>`]: bookmarkTable,
+    [`<span>⭐</span>bk-file<small>Show bookmark list in once. (File only)</small>`]: bookmarkFileArray,
+    [`<span>⭐</span>bk-all<small>Show bookmark list in once.</small>`]: bookmarkArray,
     [`<i class="fas fa-eraser"></i>cls`]: [],
     [`<span>📋</span>list`]: [],
     [`<span>📋</span>ls`]: [],
     [`<i class="fab fa-chrome"></i>chrome`]: {
       [`about<small>List of Chrome URLs</small>`]: [],
+      [`<span>⭐</span>bookmarks<small>Manage the bookmark</small>`]: [],
       version: [],
       settings: [],
 
       [`<span>🔨</span>extensions<small>Manage your chrome extension.</small>`]: {
         shortcuts: [],
       },
+      [`<i class="fas fa-history"></i>history`]: [],
 
       media: {
         internals: [],
@@ -385,7 +442,7 @@ class CMDHistory extends Array {
 
 (() => {
   // Autocomplete.HighlightColor = "#fae698"
-  window.onload = () => {
+  window.onload = async (a) => {
 
     // DOM
     const input = document.querySelector(`input`)
@@ -398,7 +455,7 @@ class CMDHistory extends Array {
 
 
     // build autocompleteTable
-    CreateAutocomplete()
+    await CreateAutocomplete()
 
     // Event
     input.addEventListener("keydown", (keyboardEvent) => {

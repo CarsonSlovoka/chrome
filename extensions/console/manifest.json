@@ -19,7 +19,8 @@
     "storage",
     "activeTab",
     "scripting",
-    "tabs" // https://developer.chrome.com/docs/extensions/reference/windows/#type-WindowType // The Tab objects only contain the url, pendingUrl, title, and favIconUrl properties if the extension's manifest file includes the "tabs" permission. // It is for "chrome.windows.getAll" to get more details.
+    "tabs", // https://developer.chrome.com/docs/extensions/reference/windows/#type-WindowType // The Tab objects only contain the url, pendingUrl, title, and favIconUrl properties if the extension's manifest file includes the "tabs" permission. // It is for "chrome.windows.getAll" to get more details.
+    "bookmarks"
   ],
   "commands": {
     "show-console-screen": {
