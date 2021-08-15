@@ -275,12 +275,12 @@ ${icon}${htmlContent}${desc}
 <input type="hidden" value="${actualContent}"/>
 </div>
 `)
-        const iconNode = fragRow.querySelector(`span`) ?? fragRow.querySelector(`i`)
+        const iconNode = fragRow.querySelector(`span, i, a`)
         if (iconNode) {
           iconNode.classList.add("me-2")
         }
 
-        const descNode = fragRow.querySelector(`small`)
+        const descNode = fragRow.querySelector(`small, a`)
         if (descNode) {
           descNode.classList.add("ms-3", "text-muted")
         }
@@ -334,7 +334,12 @@ ${icon}${htmlContent}${desc}
           if (this.#curFocus > -1) {
             if (rowArray) {
               await new Promise(resolve => setTimeout(resolve, 20)) // such that you have time to check ``document.querySelector(`div[class="autocomplete-active"]`))``
-              rowArray[this.#curFocus].click()
+              const divRow = rowArray[this.#curFocus]
+              const a = divRow.querySelector(`a`)
+              if (a) {
+                a.click()
+              }
+              divRow.click()
             }
           }
           break
