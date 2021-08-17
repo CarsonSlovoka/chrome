@@ -164,6 +164,7 @@ input[type=submit] {
    * */
   #getMatchArray(obj, text) {
     const [root, ...sub] = text.trim().split(' ')
+
     if (sub.length === 0) {
       obj = obj instanceof Array ? obj : Object.getOwnPropertyNames(obj)
 
@@ -187,7 +188,7 @@ input[type=submit] {
             return false
           }
         }
-      )
+      ).map(itemName => itemName.replaceAll(" ", this.#sep))
     }
 
     // decide subRoot
@@ -248,10 +249,9 @@ input[type=submit] {
 
         const contentArray = innerText.split(" ")
 
-        let lastContent = contentArray.slice(0).join("").replaceAll(this.#sep, " ")
-        if (contentArray.length > 1) {
-          lastContent = contentArray.slice(-1)[0].replaceAll(this.#sep, " ")
-        }
+        let lastContent = contentArray.length === 1 ?
+          contentArray[0].replaceAll(this.#sep, " ") :
+          contentArray.slice(-1)[0].replaceAll(this.#sep, " ")
 
         const actualContent = contentArray.length === 1 ?
           lastContent :
