@@ -19,7 +19,7 @@
     "storage",
     "activeTab",
     "scripting",
-    "tabs", // https://developer.chrome.com/docs/extensions/reference/windows/#type-WindowType // The Tab objects only contain the url, pendingUrl, title, and favIconUrl properties if the extension's manifest file includes the "tabs" permission. // It is for "chrome.windows.getAll" to get more details.
+    "tabs",
     "bookmarks"
   ],
   "commands": {
@@ -35,8 +35,5 @@
         "default": "Alt+1"
       }
     }
-  },
-  "content_security_policy": { // https://content-security-policy.com/
-    // "extension_pages": "default-src 'self'; connect-src * data: blob: filesystem:; style-src 'self'; img-src 'self' data:; frame-src 'self' data:; font-src 'self' data:; media-src * data: blob: filesystem:;"
   }
 }
