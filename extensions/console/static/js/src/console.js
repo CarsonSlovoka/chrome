@@ -96,6 +96,7 @@ class CommandCenter {
               [`<kbd data-click-open="chrome://bookmarks">chrome bookmarks</kbd>`, "manage the <code>bookmark</code>"],
               [`<kbd data-click-open="chrome://version">chrome version</kbd>`, "<code>Version</code> of Google Chrome"],
               [`<kbd data-click-open="chrome://settings">chrome settings</kbd>`, "<code>Settings</code> of Google Chrome"],
+              [`<kbd data-click-open="chrome://settings/languages">chrome settings languages</kbd>`, "settings of the <kbd>language</kbd>."],
               [`<kbd data-click-open="chrome://history">chrome history</kbd>`, "Web browsing <code>history</code>"]
                 ["ext", "<hr>"],
               [`<kbd data-click-open="chrome://extensions">chrome extensions</kbd>`, "Manage the chrome <code>extensions</code>"],
@@ -121,17 +122,18 @@ class CommandCenter {
               return
             }
 
+            let sep = "/"
             switch (cmdName) {
               case "game":
                 cmdName = ""
                 break
               case "media":
                 if (subCmd.length > 0) {
-                  subCmd = "-" + subCmd
+                  sep = '-'
                 }
                 break
             }
-            return OpenURL(`chrome://${cmdName}${subCmd}`)
+            return OpenURL(`chrome://${[cmdName, subCmd].join(sep)}`)
           }
           if (argObj.help || argObj.h) {
             showChromeHelp()
@@ -376,9 +378,11 @@ async function CreateAutocomplete() {
       [`about<small>List of Chrome URLs</small>`]: [],
       [`<span>⭐</span>bookmarks<small>Manage the bookmark</small>`]: [],
       version: [],
-      settings: [],
+      [`<span>⚙</span>settings`]: [
+        "<i class=\"fas fa-language\"></i>languages"
+      ],
 
-      [`<span>🔨</span>extensions<small>Manage your chrome extension.</small>`]: {
+      [`<i class="fas fa-puzzle-piece"></i>extensions<small>Manage your chrome extension.</small>`]: {
         shortcuts: [],
       },
       [`<i class="fas fa-history"></i>history`]: [],
