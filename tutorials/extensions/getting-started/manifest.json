@@ -8,7 +8,7 @@
   // 👇 Recommended
   "author": "Carson",
   "description": "Build an Extension!",
-  "default_locale": "en",
+  "default_locale": "en", // 這是指如果您當前的系統語系沒有找到合適的，那麼就會使用此預設的項目
   // zh_CN, zh_TW // https://developer.chrome.com/docs/extensions/mv3/manifest/default_locale/
   "action": {
     "default_popup": "/src/tpl/popup.html",

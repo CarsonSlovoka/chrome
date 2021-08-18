@@ -60,6 +60,7 @@ function setPageBackgroundColor() {
 (() => {
   const messageApp = chrome.i18n.getMessage("app")
   console.log(messageApp)
+
   const bgHandler = new BGHandler(document.getElementById("changeColor"))
   bgHandler.ListenClickEvent(setPageBackgroundColor)
 
@@ -71,20 +72,20 @@ function setPageBackgroundColor() {
         const msg = cmdName
         chrome.storage.sync.set({msg})
         bgHandler.injectScript(() => {
-          chrome.storage.sync.get(['msg'], ({msg})=> {
+          chrome.storage.sync.get(['msg'], ({msg}) => {
             console.log(`Command: ${msg}`)
             alert(`Command: ${msg}`)
           })
         })
-      break
+        break
       case "show-alert-2": // 和show-alert是一樣的，只是show-alert有封裝，這個範例直接都用chrome的東西去弄
         const msg2 = cmdName
         chrome.storage.sync.set({msg2})
-        chrome.tabs.query({active: true, currentWindow: true}).then(([tab])=>{
+        chrome.tabs.query({active: true, currentWindow: true}).then(([tab]) => {
           chrome.scripting.executeScript({
             target: {tabId: tab.id},
             function: () => {
-              chrome.storage.sync.get(['msg2'], ({msg2})=> {
+              chrome.storage.sync.get(['msg2'], ({msg2}) => {
                 alert(`Command: ${msg2}`)
               })
             }
@@ -100,4 +101,18 @@ function setPageBackgroundColor() {
         alert(`Unknown Command: ${cmdName}`)
     }
   })
+
+
+  window.onload = () => {
+    for (const msg of [
+      chrome.i18n.getMessage("hello"),
+      chrome.i18n.getMessage("hello", ["Carson", "🙂"]),
+      chrome.i18n.getMessage("hello", "<b>Carson</b>"),
+      chrome.i18n.getMessage("hello", "<b>Carson</b>", {escapeLt: false}), // Hello // default // Content will be applying with HTML.
+      chrome.i18n.getMessage("hello", "<b>Carson</b>", {escapeLt: true}),  //<b>Hello</b> // raw text. do not translate.
+    ]) {
+      const frag = document.createRange().createContextualFragment(`<p>${msg}</p>`)
+      document.querySelector(`body`).append(frag)
+    }
+  }
 })()

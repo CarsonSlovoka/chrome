@@ -1,0 +1,25 @@
+{
+  "hello": {
+    // "message": "Hello, $USER$  Welcoming $OURSITE$. $EMOJI$", // Use "$" to wrap the variables
+    "message": "<b>您好</b> $USER$ 歡迎來到 $OUR_SITE$. $EMOJI$", // Use "$" to wrap the variables
+    "description": "Greet the user",
+    "placeholders": {
+      "user": { // variable name
+        "content": "$1", // chrome.i18n.getMessage("hello", "variable 1")
+        "example": "小明"
+      },
+      "our_site": {
+        "content": "Example.com"
+      },
+      "emoji": {
+        "content": "$2",
+        "example": "\uD83D\uDE42" // 🙂, 😎
+      }
+    }
+  },
+  "app": {
+    "message": "我的酷APP.",
+    "description": "description"
+  }
+}
+
