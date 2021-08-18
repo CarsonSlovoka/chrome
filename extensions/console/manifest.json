@@ -22,6 +22,17 @@
     "tabs",
     "bookmarks"
   ],
+
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": ["static/js/src/scripting/video-controls.js"]
+    }
+  ],
+
   "commands": {
     "show-console-screen": {
       "description": "show Console",

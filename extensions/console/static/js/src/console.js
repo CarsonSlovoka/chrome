@@ -34,6 +34,12 @@ class CommandCenter {
    * */
   constructor(node) {
     this.node = node
+
+    this.lastTabID = 0
+    chrome.tabs.onActivated.addListener(({tabId, windowId}) => { // https://stackoverflow.com/a/68632591/9935654
+      this.lastTabID = tabId
+    })
+
     this.cmdArray = [
       new Cmd("list", ["list", "ls"], "Show the information of each tab.", () => this.List()),
       new Cmd("cls", ["cls"], "<b>Clear</b> screen", () => this.Cls()),
@@ -91,7 +97,7 @@ class CommandCenter {
               [`<kbd data-click-open="chrome://version">chrome version</kbd>`, "<code>Version</code> of Google Chrome"],
               [`<kbd data-click-open="chrome://settings">chrome settings</kbd>`, "<code>Settings</code> of Google Chrome"],
               [`<kbd data-click-open="chrome://history">chrome history</kbd>`, "Web browsing <code>history</code>"]
-              ["ext", "<hr>"],
+                ["ext", "<hr>"],
               [`<kbd data-click-open="chrome://extensions">chrome extensions</kbd>`, "Manage the chrome <code>extensions</code>"],
               [`<kbd data-click-open="chrome://extensions/shortcuts">chrome extensions shortcuts</kbd>`, "Open Chrome extensions shortcuts"],
               ["media", "<hr>"],
@@ -168,6 +174,31 @@ class CommandCenter {
         bookmarkTreeNode.forEach(treeNode => {
           showLayerInfo(treeNode)
         })
+      }),
+      new Cmd("video", ["video"], "Do some control of the video.", (expression) => {
+        const argObj = ArgumentParser(expression)
+
+        const showVideoHelp = () => {
+          this.addTable(["Commands", "Description"], [
+            [`<kbd data-click-typing='video -speed=2.5'>video -speed=2.5</kbd>`, "Change the video speed to 2.5 times faster than the original."],
+          ])
+        }
+
+        if (argObj === undefined || argObj.h || argObj.help) {
+          showVideoHelp()
+          return
+        }
+
+        const speed = argObj.speed
+        if (speed) {
+          chrome.tabs.get(this.lastTabID, (tab) => {
+            chrome.tabs.sendMessage(tab.id, {name: "change-video-speed", speed}, (result) => {
+              if (result) {
+                alert(result.msg)
+              }
+            })
+          })
+        }
       })
     ]
   }
@@ -360,6 +391,9 @@ async function CreateAutocomplete() {
       [`<span>🎮</span>game`]: [`<i class="fas fa-running"></i>dino<small>A small game for you to relax.</small>`]
     },
     [`<i class="fas fa-info-circle"></i>help`]: [],
+    [`<i class="fab fab fa-youtube" style="color: #ff0000"></i>video`]: [
+      "<i class=\"fas fa-angle-double-right\"></i>-speed=",
+    ],
     [`<i class="fas fa-calculator"></i>=`]: [],
   }
   return new Autocomplete(document.querySelector(`div[data-com="autocomplete"]`), autocompleteTable)
@@ -452,7 +486,6 @@ class CMDHistory extends Array {
     const cmdObj = new CommandCenter(document.getElementById(`msg-area`))
     const cmdHistory = new CMDHistory(input, 20)
     // cmdHistory.push([...Array(100).keys()]) // test push function
-
 
     // build autocompleteTable
     await CreateAutocomplete()
