@@ -30,27 +30,6 @@
     })
   })
 
-  /*
-  const injectionArray = []
-  chrome.tabs.onActivated.addListener(({tabId, windowId}) => {
-    const dataArray = injectionArray.filter(item=>item.tabId === tabId && item.windowId === windowId)
-    if (dataArray.length === 0) {
-      injectionArray.push({tabId, windowId})
-      chrome.scripting.executeScript({
-          target: {tabId},
-          files:["/static/js/src/scripting/video-controls.js"],
-        },
-      )
-    }
-  })
-
-  chrome.tabs.onRemoved.addListener(({tabId, windowId})=>{ // Not working, permission denied.
-    const removeData = injectionArray.filter(item=>item.tabId === tabId && item.windowId === windowId)
-    removeData.forEach(data=>{
-      injectionArray.splice(injectionArray.indexOf(data), 1)
-    })
-  })*/
-
   chrome.commands.onCommand.addListener((cmdName) => {
     switch (cmdName) {
       case "show-console-screen":

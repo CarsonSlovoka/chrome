@@ -17,9 +17,7 @@
     "service_worker": "service-worker.js"
   },
   "permissions": [
-    "storage",
     "activeTab",
-    "scripting",
     "tabs",
     "bookmarks"
   ],
