@@ -9,6 +9,7 @@
     "48": "static/image/favicon/48.png",
     "128": "static/image/favicon/128.png"
   },
+  "default_locale": "en",
   "action": {
     "default_popup": "templates/popup.html"
   },

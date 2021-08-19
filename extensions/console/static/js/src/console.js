@@ -41,17 +41,17 @@ class CommandCenter {
     })
 
     this.cmdArray = [
-      new Cmd("list", ["list", "ls"], "Show the information of each tab.", () => this.List()),
-      new Cmd("cls", ["cls"], "<b>Clear</b> screen", () => this.Cls()),
-      new Cmd("help", ["help", "h"], "Show all command lists.", () => this.Help()),
-      new Cmd("=", ["="], "Do Arithmetic",
+      new Cmd("list", ["list", "ls"], chrome.i18n.getMessage("CMDList"), () => this.List()),
+      new Cmd("cls", ["cls"], chrome.i18n.getMessage("CMDClsHTML"), () => this.Cls()),
+      new Cmd("help", ["help", "h"], chrome.i18n.getMessage("CMDHelp"), () => this.Help()),
+      new Cmd("=", ["="], chrome.i18n.getMessage("CMDArithmetic"),
         (expression) => {
           const argObj = ArgumentParser(expression)
           if (argObj === undefined) {
             return this.DoArithmetic(expression.replaceAll(" ", ""))
           }
           if (argObj.help || argObj.h) {
-            this.addTable(["Operator", "Example"], [
+            this.addTable([chrome.i18n.getMessage("Operator"), chrome.i18n.getMessage("Example")], [
                 ["<kbd>+</kbd>", "<code>1+2</code>=3"],
                 ["<kbd>-</kbd>", "<code>1-2</code>=-1"],
                 ["<kbd>*</kbd>", "<code>2*3</code>=6"],
@@ -61,12 +61,12 @@ class CommandCenter {
               ]
             )
 
-            this.addTable(["Variable", "Value"], [
+            this.addTable([chrome.i18n.getMessage("Variable"), chrome.i18n.getMessage("Value")], [
               ["<kbd>e</kbd>", `${Math.exp(1)}`],
               ["<kbd>pi</kbd>", `${Math.atan2(0, -1)}`],
             ])
 
-            this.addTable(["Function", "Example"], [
+            this.addTable([chrome.i18n.getMessage("Function"), chrome.i18n.getMessage("Example")], [
                 ["<kbd>mod{x,y}</kbd>", "<code>mod{12,5}</code>=2"],
                 ["<kbd>pow{x,y}</kbd>", "<code>pow{2,3}</code>=8"],
                 ["<kbd>sqrt{x}</kbd>", "<code>sqrt{16}</code>=4"],
@@ -86,21 +86,21 @@ class CommandCenter {
           }
         }
       ),
-      new Cmd("chrome", ["chrome"], `Show some information about chrome.<br>Please use the <kbd>chrome -h</kbd> to see all full commands.`,
+      new Cmd("chrome", ["chrome"], chrome.i18n.getMessage("CMDChromeHTML"),
         (expression) => {
           const argObj = ArgumentParser(expression)
 
           const showChromeHelp = () => {
-            this.addTable(["Commands", "Description"], [
-              [`<kbd data-click-open="chrome://about">chrome about</kbd>`, "<code>List</code> of Google URLs"],
-              [`<kbd data-click-open="chrome://bookmarks">chrome bookmarks</kbd>`, "manage the <code>bookmark</code>"],
-              [`<kbd data-click-open="chrome://version">chrome version</kbd>`, "<code>Version</code> of Google Chrome"],
-              [`<kbd data-click-open="chrome://settings">chrome settings</kbd>`, "<code>Settings</code> of Google Chrome"],
-              [`<kbd data-click-open="chrome://settings/languages">chrome settings languages</kbd>`, "settings of the <kbd>language</kbd>."],
-              [`<kbd data-click-open="chrome://history">chrome history</kbd>`, "Web browsing <code>history</code>"]
-                ["ext", "<hr>"],
-              [`<kbd data-click-open="chrome://extensions">chrome extensions</kbd>`, "Manage the chrome <code>extensions</code>"],
-              [`<kbd data-click-open="chrome://extensions/shortcuts">chrome extensions shortcuts</kbd>`, "Open Chrome extensions shortcuts"],
+            this.addTable([chrome.i18n.getMessage("Commands"), chrome.i18n.getMessage("Desc")], [
+              [`<kbd data-click-open="chrome://about">chrome about</kbd>`, chrome.i18n.getMessage("ChromeAbout")],
+              [`<kbd data-click-open="chrome://bookmarks">chrome bookmarks</kbd>`, chrome.i18n.getMessage("ManageBMHTML")],
+              [`<kbd data-click-open="chrome://version">chrome version</kbd>`, chrome.i18n.getMessage("ChromeVersionHTML")],
+              [`<kbd data-click-open="chrome://settings">chrome settings</kbd>`, chrome.i18n.getMessage("ChromeSettingsHTML")],
+              [`<kbd data-click-open="chrome://settings/languages">chrome settings languages</kbd>`, chrome.i18n.getMessage("ChromeSetLangHTML")],
+              [`<kbd data-click-open="chrome://history">chrome history</kbd>`, chrome.i18n.getMessage("ChromeHistoryHTML")],
+              ["extensions", "<hr>"],
+              [`<kbd data-click-open="chrome://extensions">chrome extensions</kbd>`, chrome.i18n.getMessage("ChromeExtHTML")],
+              [`<kbd data-click-open="chrome://extensions/shortcuts">chrome extensions shortcuts</kbd>`, chrome.i18n.getMessage("ChromeExtHotkeyHTML")],
               ["media", "<hr>"],
               // [`<button onclick="OpenURL('chrome://media-internals')">chrome media internals</button>`, ""], // Refused to execute inline script because it violates the following Content Security Policy directive ...
               [`<kbd data-click-open="chrome://media-internals">chrome media internals</kbd>`, ""],
@@ -117,7 +117,7 @@ class CommandCenter {
             if (cmdName === undefined ||
               (cmdName === "game" && subCmd === "")
             ) {
-              this.ShowErrMsg(`Unknown command: ${expression}`, "❌")
+              this.ShowErrMsg(chrome.i18n.getMessage("UnknownCommand", expression), "❌")
               showChromeHelp()
               return
             }
@@ -139,17 +139,15 @@ class CommandCenter {
             showChromeHelp()
             return
           }
-          this.ShowErrMsg(`Unknown command: ${expression}`, "❌")
+          this.ShowErrMsg(chrome.i18n.getMessage("UnknownCommand", expression), "❌")
           showChromeHelp()
         }
       ),
-      new Cmd("bookmarks", ["bk"], "to query the bookmark", async (expression) => {
+      new Cmd("bookmarks", ["bm"], chrome.i18n.getMessage("CMDBM"), async (expression) => {
         const argObj = ArgumentParser(expression)
 
         const showBookmarksHelp = () => {
-          this.addTable(["Commands", "Description"], [
-            [`<kbd data-click-typing='bk --dir -search=".*"'>bk --dir -search=".*"</kbd>`, "List all directory"],
-          ])
+          this.addTable([chrome.i18n.getMessage("Commands"), chrome.i18n.getMessage("Desc")], [])
         }
 
         if (argObj === undefined || argObj.h || argObj.help) {
@@ -177,12 +175,12 @@ class CommandCenter {
           showLayerInfo(treeNode)
         })
       }),
-      new Cmd("video", ["video"], "Do some control of the video.", (expression) => {
+      new Cmd("video", ["video"], chrome.i18n.getMessage("CMDVideo"), (expression) => {
         const argObj = ArgumentParser(expression)
 
         const showVideoHelp = () => {
-          this.addTable(["Commands", "Description"], [
-            [`<kbd data-click-typing='video -speed=2.5'>video -speed=2.5</kbd>`, "Change the video speed to 2.5 times faster than the original."],
+          this.addTable([chrome.i18n.getMessage("Commands"), chrome.i18n.getMessage("Desc")], [
+            [`<kbd data-click-typing='video -speed=2.5'>video -speed=2.5</kbd>`, chrome.i18n.getMessage("CMDVideoSpeedExample", "2.5")],
           ])
         }
 
@@ -329,7 +327,7 @@ class CommandCenter {
       cmd.aliases.forEach(aliases => hotkeyString += `<kbd>${aliases}</kbd>  `) // <code>
       rowArray.push([cmd.description, hotkeyString])
     }
-    this.addTable(["Desc", "Available commands"], rowArray)
+    this.addTable([chrome.i18n.getMessage("Desc"), chrome.i18n.getMessage("AvailableCMDs")], rowArray)
   }
 
   DoArithmetic(expressions) {
@@ -351,7 +349,7 @@ class CommandCenter {
         <div class="f5 f4-m f3-l lh-copy measure mt0">
           <p>${icon}<span class="">${msg}</span></p>
         </div>
-        <cite class="f7 ttu tracked fs-normal">―<i>System Message</i></cite>
+        <cite class="f7 ttu tracked fs-normal">―<i>${chrome.i18n.getMessage("SystemMessage")}</i></cite>
     </blockquote>
     `)
     this.node.append(frag)
@@ -368,21 +366,21 @@ async function CreateAutocomplete() {
   Bookmarks.Tree2AutocompleteArray(bookmarkTree, bookmarkArray, true)
 
   const autocompleteTable = {
-    [`<span>⭐</span>bk<small>Show the bookmark by hierarchy.</small>`]: bookmarkTable,
-    [`<span>⭐</span>bk-file<small>Show bookmark list in once. (File only)</small>`]: bookmarkFileArray,
-    [`<span>⭐</span>bk-all<small>Show bookmark list in once.</small>`]: bookmarkArray,
-    [`<i class="fas fa-eraser"></i>cls`]: [],
+    [`<span>⭐</span>bm<small>${chrome.i18n.getMessage("BMDesc")}</small>`]: bookmarkTable,
+    [`<span>⭐</span>bm-file<small>${chrome.i18n.getMessage("BMFileDesc")}</small>`]: bookmarkFileArray,
+    [`<span>⭐</span>bm-all<small>${chrome.i18n.getMessage("BMAllDesc")}</small>`]: bookmarkArray,
+    [`<i class="fas fa-eraser"></i>cls<small>${chrome.i18n.getMessage("CMDCls")}</small>`]: [],
     [`<span>📋</span>list`]: [],
     [`<span>📋</span>ls`]: [],
     [`<i class="fab fa-chrome"></i>chrome`]: {
-      [`about<small>List of Chrome URLs</small>`]: [],
-      [`<span>⭐</span>bookmarks<small>Manage the bookmark</small>`]: [],
+      [`about<small>${chrome.i18n.getMessage("ChromeAbout")}</small>`]: [],
+      [`<span>⭐</span>bookmarks<small>${chrome.i18n.getMessage("ManageBM")}</small>`]: [],
       version: [],
       [`<span>⚙</span>settings`]: [
         "<i class=\"fas fa-language\"></i>languages"
       ],
 
-      [`<i class="fas fa-puzzle-piece"></i>extensions<small>Manage your chrome extension.</small>`]: {
+      [`<i class="fas fa-puzzle-piece"></i>extensions<small>${chrome.i18n.getMessage("MangeChromeExtension")}</small>`]: {
         shortcuts: [],
       },
       [`<i class="fas fa-history"></i>history`]: [],
@@ -396,9 +394,9 @@ async function CreateAutocomplete() {
     },
     [`<i class="fas fa-info-circle"></i>help`]: [],
     [`<i class="fab fab fa-youtube" style="color: #ff0000"></i>video`]: [
-      "<i class=\"fas fa-angle-double-right\"></i>-speed=",
+      `<i class=\"fas fa-angle-double-right\"></i>-speed=<small>${chrome.i18n.getMessage("PlaybackRate")}</small>`,
     ],
-    [`<i class="fas fa-calculator"></i>=`]: [],
+    [`<i class="fas fa-calculator"></i>=<small>${chrome.i18n.getMessage("CMDArithmeticHint")}</small>`]: [],
   }
   return new Autocomplete(document.querySelector(`div[data-com="autocomplete"]`), autocompleteTable)
 }
@@ -528,7 +526,7 @@ class CMDHistory extends Array {
         }
       }
 
-      cmdObj.ShowErrMsg(`Unknown command: ${inputValue}`, "❌")
+      cmdObj.ShowErrMsg(chrome.i18n.getMessage("UnknownCommand", inputValue), "❌")
       cmdObj.Help()
     }
   }
