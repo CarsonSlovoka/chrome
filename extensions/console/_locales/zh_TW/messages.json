@@ -153,6 +153,10 @@
       }
     }
   },
+  "CMDVideoREC": {
+    "message": "您可以選擇{螢幕、視窗、網頁分頁}的其中一項，並進行錄製",
+    "description": "Record the screen, window, tabs to a video file."
+  },
   "CMDBM": {
     "message": "您可以使用此指令來快速地打開書籤的連結",
     "description": "You can use this command to help you quickly open the URL of the bookmark that you made."

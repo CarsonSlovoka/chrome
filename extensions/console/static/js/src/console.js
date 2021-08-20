@@ -4,6 +4,7 @@ import * as MathEval from "../pkg/math/math-eval.js"
 import {ArgumentParser} from "../pkg/flag/argument-parser.js"
 import {Autocomplete} from "../pkg/com/autocomplete.js"
 import * as Bookmarks from "../pkg/chrome/bookmarks/bookmarks.js"
+import * as Rec from "../pkg/chrome/rec/media-recorder.js"
 
 
 function Cmd(name, aliases = undefined, description, func = undefined) {
@@ -198,6 +199,11 @@ class CommandCenter {
               }
             })
           })
+        }
+
+        if (argObj.rec) {
+          const rec = new Rec.RTCMediaRecorder(document.getElementById(`msg-area`), {fps: 60})
+          rec.chooseDesktopMedia()
         }
       })
     ]
@@ -395,6 +401,7 @@ async function CreateAutocomplete() {
     [`<i class="fas fa-info-circle"></i>help`]: [],
     [`<i class="fab fab fa-youtube" style="color: #ff0000"></i>video`]: [
       `<i class=\"fas fa-angle-double-right\"></i>-speed=<small>${chrome.i18n.getMessage("PlaybackRate")}</small>`,
+      `<span>📹</span>-rec<small>${chrome.i18n.getMessage("CMDVideoREC")}</small>`
     ],
     [`<i class="fas fa-calculator"></i>=<small>${chrome.i18n.getMessage("CMDArithmeticHint")}</small>`]: [],
   }

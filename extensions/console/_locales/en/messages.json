@@ -153,6 +153,10 @@
       }
     }
   },
+  "CMDVideoREC": {
+    "message": "It allows you to record the screen, window, tabs to a video file.",
+    "description": "It allows you to record the screen, window, tabs to a video file."
+  },
   "CMDBM": {
     "message": "You can use this command to help you quickly open the URL of the bookmark that you made.",
     "description": "You can use this command to help you quickly open the URL of the bookmark that you made."
