@@ -286,7 +286,11 @@ ${icon}${htmlContent}${desc}
         }
 
         fragRow.querySelector(`div`).onclick = (e) => {
-          inp.value = e.target.querySelector(`input`).value
+          const target = e.target
+          if (target.tagName === "A") {
+            return
+          }
+          inp.value = target.querySelector(`input`).value
           this.closeAllLists()
         }
         fragItemArray.querySelector('div').append(fragRow)
