@@ -21,6 +21,10 @@
     "message": "Description",
     "description": "Description"
   },
+  "Help": {
+    "message": "Help",
+    "description": "Help"
+  },
   "Commands": {
     "message": "Commands",
     "description": "Commands"
@@ -160,6 +164,14 @@
   "CMDVideoREC": {
     "message": "It allows you to record the screen, window, tabs to a video file.",
     "description": "It allows you to record the screen, window, tabs to a video file."
+  },
+  "CMDVideoRECOptions": {
+    "message": "Change the width, height, and FPS. I don't encourage you to change the width and height since it will get lower quality.",
+    "description": "Change the width, height, and FPS. I don't encourage you to change the width and height since it will get lower quality."
+  },
+  "CMDVideoRECOptionsFPS": {
+    "message": "Recommended option! Default is 25.",
+    "description": "Recommended option! Default is 25."
   },
   "CMDBM": {
     "message": "You can use this command to help you quickly open the URL of the bookmark that you made.",

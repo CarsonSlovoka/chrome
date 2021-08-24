@@ -75,10 +75,14 @@ export class RTCMediaRecorder { // real time communicate
    * @param {Number} width
    * @param {Number} height
    * @param {Number} fps
+   * @param {boolean} display
    * */
-  constructor(parentNode, {width = undefined, height = undefined, fps = 25}) {
+  constructor(parentNode,
+              {width = undefined, height = undefined, fps = 25,
+                display = true,
+              }) {
     this.#parentNode = parentNode
-    this.#constraints = {width, height, fps}
+    this.#constraints = {width, height, fps, display}
   }
 
   /**
@@ -143,7 +147,9 @@ export class RTCMediaRecorder { // real time communicate
     }).then(async (mediaStream) => {
       const video = document.createElement(`video`)
       video.srcObject = mediaStream // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject#supporting_fallback_to_the_src_property
-      // video.style.visibility = "hidden"
+      if (!this.#constraints.display) {
+        video.style.visibility = "hidden"
+      }
       const canvas = document.createElement(`canvas`)
       // this.#drawVideo2Canvas(video, fps, canvas)
       const canvasREC = new CanvasRecord(canvas, this.#constraints.fps, "video/webm") // ;codecs=vp9
