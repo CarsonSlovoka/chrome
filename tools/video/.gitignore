@@ -1,0 +1,5 @@
+temp/*
+*.mp4
+*.vtt
+*.webm
+!tutorial.vtt

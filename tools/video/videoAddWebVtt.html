@@ -1,0 +1,122 @@
+<!-- https://stackoverflow.com/a/68895630/9935654 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>video add webVTT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css"
+        integrity="sha512-F7WyTLiiiPqvu2pGumDR15med0MDkUIo5VTVyyfECR5DZmCnDhti9q5VID02ItWjq6fvDfMaBaDl2J3WdL1uxA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+  <!--
+  https://www.w3.org/TR/webvtt1/#css-extensions-introduction
+  selector不是隨便亂訂的，有指定的名稱，共有
+  c, i, b, u, ruby, rt, v, lang這幾個
+  -->
+  <style>
+    video::cue(.loud) {
+      color: red;
+    }
+
+    video::cue(#mark) {
+      color: #efd051;
+      font-size: 50px;
+    }
+  </style>
+</head>
+
+<body>
+
+<input id="input-video" data-com="fileBtn" placeholder="Select Video" accept="video/mp4,video/webm"> <!-- com: components -->
+<div class="mt-2"><input id="input-caption" data-com="fileBtn" placeholder="Select captions" accept=".vtt"></div> <!-- .srt not supported -->
+
+<input type="submit" class="mt-2"/>
+<section id="result">
+  <!-- ... -->
+</section>
+</body>
+<script>
+  class FileButton {
+    static className = "btn btn-primary"
+
+    static BuildAll() {
+      document.querySelectorAll(`input[data-com="fileBtn"]`).forEach(input => {
+        new FileButton(input, FileButton.className)
+      })
+    }
+
+    /**
+     * @param {HTMLInputElement} input
+     * @param {string} btnClsName
+     * */
+    constructor(input, btnClsName) {
+      input.style.display = "none" // [display is better than visibility](https://stackoverflow.com/a/48495293/9935654)
+      input.type = "file"
+      const frag = document.createRange().createContextualFragment(`<button class="${btnClsName}">${input.placeholder}</button>`)
+      const button = frag.querySelector(`button`)
+
+      input.parentNode.insertBefore(frag, input)
+
+      button.onclick = () => {
+        input.click()
+      }
+      input.addEventListener(`change`, (e) => {
+        // create a textNode to show the file name.
+        const file = input.files[0]
+        if (file === undefined) {
+          return
+        }
+        const textNode = document.createTextNode(file.name)
+        if (button.textNode) { // create a new attribute to record previous data.
+          button.textNode.remove()
+        }
+        button.textNode = textNode
+        button.parentNode.insertBefore(textNode, input)
+      })
+    }
+  }
+
+  (() => {
+    window.onload = () => {
+      // FileButton.className ="btn btn-danger"
+      FileButton.BuildAll()
+
+      const inputVideo = document.getElementById(`input-video`)
+      const inputCaption = document.getElementById(`input-caption`)
+      const submitBtn = document.querySelector(`input[type="submit"]`)
+      submitBtn.onclick = () => {
+        const videoFile = inputVideo.files[0]
+        const captionFile = inputCaption.files[0]
+        if (videoFile === undefined || captionFile === undefined) {
+          return
+        }
+        const blobVideo = new Blob([videoFile], {"type": videoFile.type})
+        const blobCaption = new Blob([captionFile], {"type": captionFile.type})
+
+        const videoBlobURL = URL.createObjectURL(blobVideo)
+        const captionBlobURL = URL.createObjectURL(blobCaption)
+        const frag = document.createRange().createContextualFragment(`
+        <video width="1280" height="720" controls>
+        <source src="${videoBlobURL}" type="${videoFile.type}">
+        <track src="${captionBlobURL}" kind="captions" srclang="en" label="${videoFile.name}" default> <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track | label=zh_TW-->
+        </video>
+        `)
+        const resultNode = document.getElementById(`result`)
+        const video = frag.querySelector(`video`)
+        resultNode.querySelectorAll('*').forEach(e => e.remove())
+        resultNode.append(frag)
+        /* 有可能沒有載完，或者不用autoplay的時候就清除資源就沒辦法正常撥放了
+        video.onloadeddata = () => {
+          URL.revokeObjectURL(videoBlobURL)
+          URL.revokeObjectURL(captionBlobURL)
+        }
+         */
+        submitBtn.addEventListener(`click`, () => {
+          console.log("free memory")
+          URL.revokeObjectURL(videoBlobURL)
+          URL.revokeObjectURL(captionBlobURL)
+        }, {once: true})
+      }
+    }
+  })()
+</script>
+</html>
