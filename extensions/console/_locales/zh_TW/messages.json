@@ -8,6 +8,10 @@
       }
     }
   },
+  "ReleaseResource": {
+    "message": "釋放資源",
+    "description": "Release the resource"
+  },
   "SystemMessage": {
     "message": "系統訊息",
     "description": "System Message"

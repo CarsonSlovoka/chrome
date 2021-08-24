@@ -8,6 +8,10 @@
       }
     }
   },
+  "ReleaseResource": {
+    "message": "Release the resource",
+    "description": "Release the resource"
+  },
   "SystemMessage": {
     "message": "System Message",
     "description": "System Message"

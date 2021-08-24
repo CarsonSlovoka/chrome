@@ -8,9 +8,11 @@ class CanvasRecord {
     this.canvas = canvas
     const stream = canvas.captureStream(fps) // fps // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream
     this.mediaRecorder = new MediaRecorder(stream, { // https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/MediaRecorder
-      mimeType: mediaType
+      // audioBitsPerSecond : 128000,
+      // videoBitsPerSecond : 2500000,
+      // bitsPerSecond:2500000,
+      mimeType : mediaType,
     })
-
     this.chunks = []
   }
 
@@ -41,6 +43,7 @@ class CanvasRecord {
           type: this.mediaRecorder.mimeType
         })
 
+        /*
         const reader = new FileReader()
         reader.readAsDataURL(blob)
         const dataURI = await new Promise(resolve => {
@@ -49,6 +52,8 @@ class CanvasRecord {
           }
         })
         resolve(dataURI)
+        */
+        resolve(URL.createObjectURL(blob)) // blobURL
       }
       this.mediaRecorder.requestData() // trigger ``ondataavailable``  // https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/requestData
       this.mediaRecorder.stop()
@@ -67,8 +72,11 @@ export class RTCMediaRecorder { // real time communicate
 
   /**
    * @param {HTMLElement} parentNode
+   * @param {Number} width
+   * @param {Number} height
+   * @param {Number} fps
    * */
-  constructor(parentNode, {width = 600, height = 400, fps = 25}) {
+  constructor(parentNode, {width = undefined, height = undefined, fps = 25}) {
     this.#parentNode = parentNode
     this.#constraints = {width, height, fps}
   }
@@ -114,7 +122,7 @@ export class RTCMediaRecorder { // real time communicate
   #accessToRecord(id) {
     const fps = this.#constraints.fps
 
-    const supports = navigator.mediaDevices.getSupportedConstraints()
+    // const supports = navigator.mediaDevices.getSupportedConstraints()
     navigator.mediaDevices.getUserMedia({ // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
       audio: false,
       video: { // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia#syntax
@@ -122,19 +130,27 @@ export class RTCMediaRecorder { // real time communicate
         mandatory: { // https://github.com/hokein/electron-sample-apps/issues/62
           chromeMediaSource: "desktop",
           chromeMediaSourceId: id,
-          maxWidth: 192,
-          maxHeight: 108,
+          /*
+          minWidth: this.#constraints.width,
+          maxWidth: this.#constraints.width, // 1920
+          minHeight: this.#constraints.height,
+          maxHeight: this.#constraints.height, // 1080
+           */
+          minFrameRate: fps,
           maxFrameRate: fps,
         }
       }
     }).then(async (mediaStream) => {
       const video = document.createElement(`video`)
       video.srcObject = mediaStream // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject#supporting_fallback_to_the_src_property
+      // video.style.visibility = "hidden"
       const canvas = document.createElement(`canvas`)
       // this.#drawVideo2Canvas(video, fps, canvas)
-      const canvasREC = new CanvasRecord(canvas, this.#constraints.fps, 'video/webm')
+      const canvasREC = new CanvasRecord(canvas, this.#constraints.fps, "video/webm") // ;codecs=vp9
 
       video.onloadedmetadata = (e) => {
+        video.width = this.#constraints.width ?? video.clientWidth
+        video.height = this.#constraints.height ?? video.clientHeight
         video.play()
         video.controls = true
         this.#drawVideo2Canvas(video, fps, canvas)
@@ -164,22 +180,32 @@ export class RTCMediaRecorder { // real time communicate
        */
 
       mediaStream.oninactive = async () => { // same as ``track.onended  = (e) => {}``
-        const dataURI = await canvasREC.stop()
+        const blobURL = await canvasREC.stop()
 
         const range = document.createRange()
         const frag = range.createContextualFragment(`<video crossorigin="anonymous" controls>
-<source/>
-</video>`)
-        const source = frag.querySelector(`source`)
-        source.src = dataURI
-        source.type = 'video/webm' //canvasREC.mediaRecorder.mimeType
-        source.onend = (e) => {
-          if (this.src.startsWith("blob")) {
-            URL.revokeObjectURL(this.src)
+<source src="${blobURL}" type="video/mp4">
+</video>
+<div>
+<a href="${blobURL}" download="result.webm"><button class="btn btn-primary">result.webm</button></a>
+<button data-name="release" class="ms-3 btn btn-primary">${chrome.i18n.getMessage("ReleaseResource")}</button>
+</div>`)
+        // frag.querySelector(`source`).type = 'video/webm' //canvasREC.mediaRecorder.mimeType
+        /*
+        frag.querySelector(`video`).onloadeddata = (e) => {
+          if (blobURL.startsWith("blob")) {
+            // URL.revokeObjectURL(blobURL) // If free the memory, then you can't play anymore.
           }
         }
-        this.#parentNode.append(frag)
+         */
 
+        frag.querySelector(`button[data-name="release"]`).onclick = (e) => {
+          if (blobURL.startsWith("blob")) {
+            URL.revokeObjectURL(blobURL)
+          }
+        }
+
+        this.#parentNode.append(frag)
         video.srcObject = null
         video.remove()
       }
