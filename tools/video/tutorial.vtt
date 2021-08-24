@@ -1,0 +1,31 @@
+WEBVTT - I am comments
+
+NOTE
+https://www.w3.org/TR/webvtt1/#css-extensions-introduction
+ffmpeg -i result.webm -c copy output.mp4
+comment 1
+comment 2
+still comment 1
+
+
+00:00:00.833 --> 00:00:02.464
+Hello world
+u as <u>underline</u>
+b as <b>bold</b>
+
+NOTE comment
+comment2
+
+- comment: class Test
+00:00:03.000 --> 00:00:06.000
+<c>Class Test</c>
+<c.loud>class test</c>
+
+NOTE
+如果已經用id，後面不能再加任何註解
+
+mark
+00:00:07.000 --> 00:00:12.000
+I am id selector
+<c>I am id selector</c>
+<b>selector</b>123

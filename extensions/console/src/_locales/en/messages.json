@@ -1,0 +1,180 @@
+{
+  "UnknownCommand": {
+    "message": "Unknown command: $CMD_NAME$",
+    "description": "Unknown command",
+    "placeholders": {
+      "cmd_name": {
+        "content": "$1"
+      }
+    }
+  },
+  "ReleaseResource": {
+    "message": "Release the resource",
+    "description": "Release the resource"
+  },
+  "SystemMessage": {
+    "message": "System Message",
+    "description": "System Message"
+  },
+
+  "Desc": {
+    "message": "Description",
+    "description": "Description"
+  },
+  "Help": {
+    "message": "Help",
+    "description": "Help"
+  },
+  "Commands": {
+    "message": "Commands",
+    "description": "Commands"
+  },
+  "AvailableCMDs": {
+    "message": "Available commands",
+    "description": "Available commands"
+  },
+
+  "Variable": {
+    "message": "Variable",
+    "description": "Variable"
+  },
+  "Operator": {
+    "message": "Operator",
+    "description": "Operator"
+  },
+  "Value": {
+    "message": "Value",
+    "description": "Value"
+  },
+  "Function": {
+    "message": "Function",
+    "description": "Function"
+  },
+  "Example": {
+    "message": "Example",
+    "description": "Example"
+  },
+
+  "BMDesc": {
+    "message": "Show the bookmark by hierarchy.",
+    "description": "Show the bookmark by hierarchy."
+  },
+  "BMFileDesc": {
+    "message": "Show bookmark list in once. (File only)",
+    "description": "Show bookmark list in once. (File only)"
+  },
+  "BMAllDesc": {
+    "message": "Show bookmark list in once.",
+    "description": "Show bookmark list in once."
+  },
+
+  "ManageBM": {
+    "message": "Manage bookmarks",
+    "description": "Manage bookmarks"
+  },
+  "ManageBMHTML": {
+    "message": "Manage <code>bookmarks</code>",
+    "description": "Manage <code>bookmarks</code>"
+  },
+  "MangeChromeExtension": {
+    "message": "Manage the chrome extension",
+    "description": "Manage the chrome extension"
+  },
+
+  "ChromeAbout": {
+    "message": "List of Chrome URLs",
+    "description": "List of Chrome URLs"
+  },
+  "ChromeVersionHTML": {
+    "message": "<code>Version</code> of Google Chrome",
+    "description": "<code>Version</code> of Google Chrome"
+  },
+  "ChromeSettingsHTML": {
+    "message": "<code>Settings</code> of Google Chrome",
+    "description": "<code>Settings</code> of Google Chrome"
+  },
+  "ChromeSetLangHTML": {
+    "message": "settings of the <kbd>language</kbd>.",
+    "description": "settings of the <kbd>language</kbd>."
+  },
+  "ChromeExtHTML": {
+    "message": "Manage the chrome <code>extensions</code>",
+    "description": "Manage the chrome <code>extensions</code>"
+  },
+  "ChromeExtHotkeyHTML": {
+    "message": "Manage the <b>hotkey</b> of the extension.",
+    "description": "Manage the hotkey of the extension."
+  },
+  "ChromeHistoryHTML": {
+    "message": "Web browsing <code>history</code>",
+    "description": "Web browsing <code>history</code>"
+  },
+
+
+  "PlaybackRate": {
+    "message": "The play speeds of video",
+    "description": "The play speeds of video"
+  },
+
+  "CMDList": {
+    "message": "Show the title of each tab.",
+    "description": "Show the title of each tab."
+  },
+
+  "CMDCls": {
+    "message": "Clear the screen.",
+    "description": "Clear the screen."
+  },
+  "CMDClsHTML": {
+    "message": "<b>Clear<b> the screen.",
+    "description": "Clear the screen."
+  },
+
+  "CMDHelp": {
+    "message": "Show all command lists.",
+    "description": "Show all command lists."
+  },
+  "CMDChromeHTML": {
+    "message": "The URLs provide by chrome.<br>Please use the <kbd>chrome -h</kbd> to see all full commands.",
+    "description": "The URLs provide by chrome.<br>Please use the <kbd>chrome -h</kbd> to see all full commands."
+  },
+  "CMDArithmetic": {
+    "message": "Calculator",
+    "description": "Calculator"
+  },
+  "CMDArithmeticHint": {
+    "message": "Try typing \"= -help\" to see how to use it.",
+    "description": "Try typing \"= -help\" to see how to use it."
+  },
+
+  "CMDVideo": {
+    "message": "Do some control of the video.",
+    "description": "Do some control of the video."
+  },
+  "CMDVideoSpeedExample": {
+    "message": "Change the video speed to $N$ times faster than the original.",
+    "description": "Change the video speed to $N$ times faster than the original.",
+    "placeholders": {
+      "N": {
+        "content": "$1",
+        "example": "2.5"
+      }
+    }
+  },
+  "CMDVideoREC": {
+    "message": "It allows you to record the screen, window, tabs to a video file.",
+    "description": "It allows you to record the screen, window, tabs to a video file."
+  },
+  "CMDVideoRECOptions": {
+    "message": "Change the width, height, and FPS. I don't encourage you to change the width and height since it will get lower quality.",
+    "description": "Change the width, height, and FPS. I don't encourage you to change the width and height since it will get lower quality."
+  },
+  "CMDVideoRECOptionsFPS": {
+    "message": "Recommended option! Default is 25.",
+    "description": "Recommended option! Default is 25."
+  },
+  "CMDBM": {
+    "message": "You can use this command to help you quickly open the URL of the bookmark that you made.",
+    "description": "You can use this command to help you quickly open the URL of the bookmark that you made."
+  }
+}

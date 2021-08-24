@@ -1,0 +1,89 @@
+{
+  // https://developer.chrome.com/docs/extensions/mv3/manifest/
+
+  // 👇 Required
+  "manifest_version": 3,
+  "name": "Getting Started Example",
+  "version": "1.0",
+  // 👇 Recommended
+  "author": "Carson",
+  "description": "Build an Extension!",
+  "default_locale": "en", // 這是指如果您當前的系統語系沒有找到合適的，那麼就會使用此預設的項目
+  // zh_CN, zh_TW // https://developer.chrome.com/docs/extensions/mv3/manifest/default_locale/
+  "action": {
+    "default_popup": "/src/tpl/popup.html",
+    // "default_icon": "hello_extensions.png" // 可以只給一張圖片
+    "default_icon": {
+      /*
+      快速列所看到的圖標，您可以在指定與icons不同的圖片(如果是相同的就可以省略，預設會用icons的圖片)
+      目前測試過png可行，jpg不行
+
+      "16": "/src/static/img/get_started16.png",
+      "32": "/src/static/img/get_started32.png",
+      "48": "/src/static/img/get_started48.png"
+      "128": "/src/static/img/get_started128.png"
+      */
+    }
+  },
+  "icons": {
+    // 擴充功能 或者 快速圖標(如果釘選的圖標忽略，這有設定就會用這個來取代) 所看到的圖標
+    "16": "/src/static/img/get_started16.png",
+    "32": "/src/static/img/get_started32.png",
+    "48": "/src/static/img/get_started48.png",
+    "128": "/src/static/img/get_started128.png"
+  },
+  // 👇 Optional
+  // "minimum_chrome_version": 93, // 允許service_worker的文件不在root
+
+  // checklist: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/#api_checklist
+  "background": {
+    // Replace background.page or background.scripts with ``background.service_worker``
+    // 在chrome93以下還是乖乖把頭文件放在root
+    "service_worker": "background.js"
+    // chrome.extension.getBackgroundPage(): https://developer.chrome.com/docs/extensions/reference/extension/#method-getBackgroundPage // null if the extension has no background page. // 但是v3好像已經把這個拿掉了: https://developer.chrome.com/docs/extensions/mv3/mv3-migration-checklist/
+  },
+  "permissions": [
+    // https://developer.chrome.com/docs/extensions/reference/storage/
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  // https://developer.chrome.com/docs/extensions/reference/commands/
+  // chrome://extensions/shortcuts // 如果熱鍵有問題，上這邊去更新(可能要先點一下，再更新才有用，真的超怪...)，如果還是不成功，把套件移除重裝再重開瀏覽器。
+  "commands": {
+    "show-alert": {
+      "suggested_key": {
+        "default": "Alt+P"
+      },
+      "description": "show alert"
+    },
+    "undo": {
+      "suggested_key": {
+        "default": "Alt+U"
+      },
+      "description": "Set the background to the original."
+    },
+    "_execute_action": {
+      // https://developer.chrome.com/docs/extensions/reference/commands/#usage
+      "suggested_key": {
+        /*
+        All OS: Ctrl, Alt, Shift,
+        macOS: MacCtrl, Command
+        Chrome OS: Search
+
+        Keyboard shortcut suggestions for global commands are limited to Ctrl+Shift+[0..9] <-- 有些會有問題，反正如果你發現按鍵按不出來，就表示該鍵已經被使用了。
+        */
+        "default": "Alt+1"
+
+        // "mac": "MacCtrl+0"
+        /*
+        "windows": "",
+        "chromeos": "",
+        "linux": ""
+        */
+      },
+      "description": ""
+    }
+  },
+  "options_page": "/src/tpl/options.html"
+}

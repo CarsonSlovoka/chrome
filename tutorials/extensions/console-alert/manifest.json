@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Show alert(console) Test",
+  "version": "1.0",
+  "description": "A demo for to debug.",
+  "icons": {
+    "16": "static/image/favicon16.png",
+    "48": "static/image/favicon48.png"
+  },
+  "action": {
+    "default_popup": "templates/popup.html"
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "commands": {
+    "show-alert": {
+      "description": "show alert",
+      "suggested_key": {
+        "default": "Alt+2"
+      }
+    },
+    "_execute_action": {
+      "description": "This hotkey can quickly open the extension. (same as you click extension by mouse.)",
+      "suggested_key": {
+        "default": "Alt+1"
+      }
+    }
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "UnknownCommand": {
+    "message": "無此指令: $CMD_NAME$",
+    "description": "Unknown command",
+    "placeholders": {
+      "cmd_name": {
+        "content": "$1"
+      }
+    }
+  },
+  "ReleaseResource": {
+    "message": "釋放資源",
+    "description": "Release the resource"
+  },
+  "SystemMessage": {
+    "message": "系統訊息",
+    "description": "System Message"
+  },
+
+  "Desc": {
+    "message": "描述",
+    "description": "Description"
+  },
+  "Help": {
+    "message": "幫助",
+    "description": "Help"
+  },
+  "Commands": {
+    "message": "指令",
+    "description": "Commands"
+  },
+  "AvailableCMDs": {
+    "message": "可使用的指令",
+    "description": "Available commands"
+  },
+
+  "Variable": {
+    "message": "變數",
+    "description": "Variable"
+  },
+  "Operator": {
+    "message": "運算子",
+    "description": "Operator"
+  },
+  "Value": {
+    "message": "值",
+    "description": "Value"
+  },
+  "Function": {
+    "message": "函數",
+    "description": "Function"
+  },
+  "Example": {
+    "message": "範例",
+    "description": "Example"
+  },
+
+  "BMDesc": {
+    "message": "用層級結構的方式顯示書籤",
+    "description": "Show the bookmark by hierarchy."
+  },
+  "BMFileDesc": {
+    "message": "顯示所有書籤內容(不含資料夾、不做分層)",
+    "description": "Show bookmark list in once. (File only)"
+  },
+  "BMAllDesc": {
+    "message": "顯示所有書籤內容(不做分層)",
+    "description": "Show bookmark list in once."
+  },
+
+  "ManageBM": {
+    "message": "管理書籤",
+    "description": "Manage bookmarks"
+  },
+  "ManageBMHTML": {
+    "message": "管理<code>書籤</code>",
+    "description": "Manage <code>bookmarks</code>"
+  },
+  "MangeChromeExtension": {
+    "message": "管理chrome的擴充功能(插件)",
+    "description": "Manage the chrome extension"
+  },
+
+  "ChromeAbout": {
+    "message": "顯示所有Chrome內建的URL清單",
+    "description": "List of Chrome URLs"
+  },
+  "ChromeVersionHTML": {
+    "message": "Chrome<code>版號</code>資訊",
+    "description": "<code>Version</code> of Google Chrome"
+  },
+  "ChromeSettingsHTML": {
+    "message": "Google Chrome<code>設定</code>",
+    "description": "<code>Settings</code> of Google Chrome"
+  },
+  "ChromeSetLangHTML": {
+    "message": "設定<kbd>語言</kbd>",
+    "description": "settings of the <kbd>language</kbd>."
+  },
+  "ChromeExtHTML": {
+    "message": "管理Chrome的<code>擴充功能</code>",
+    "description": "Manage the chrome <code>extensions</code>"
+  },
+  "ChromeExtHotkeyHTML": {
+    "message": "擴充功能的<b>快捷鍵</b>設定",
+    "description": "Manage the hotkey of the extension."
+  },
+  "ChromeHistoryHTML": {
+    "message": "<code>歷史</code>瀏覽紀錄",
+    "description": "Web browsing <code>history</code>"
+  },
+
+  "PlaybackRate": {
+    "message": "影片播放速度",
+    "description": "The play speeds of video"
+  },
+
+  "CMDList": {
+    "message": "顯示所有分頁的標題名稱",
+    "description": "Show the title of each tab."
+  },
+
+  "CMDCls": {
+    "message": "清除畫面",
+    "description": "Clear the screen."
+  },
+  "CMDClsHTML": {
+    "message": "<b>清除</b>畫面",
+    "description": "Clear the screen."
+  },
+
+  "CMDHelp": {
+    "message": "顯示所有命令",
+    "description": "Show all command lists."
+  },
+  "CMDChromeHTML": {
+    "message": "Chrome內建所提供的URL指令<br>您可以輸入<kbd>chrome -h</kbd>取得更完整的訊息",
+    "description": "The URLs provide by chrome.<br>Please use the <kbd>chrome -h</kbd> to see all full commands."
+  },
+
+  "CMDArithmetic": {
+    "message": "小算盤",
+    "description": "Calculator"
+  },
+  "CMDArithmeticHint": {
+    "message": "試試\"= -help\"來查看該如何使用",
+    "description": "Try typing \"= -help\" to see how to use it."
+  },
+
+  "CMDVideo": {
+    "message": "一些有關視頻的操作",
+    "description": "Do some control of the video."
+  },
+  "CMDVideoSpeedExample": {
+    "message": "將視頻的撥放速度調整至$N$倍",
+    "description": "Change the video speed to $N$ times faster than the original.",
+    "placeholders": {
+      "N": {
+        "content": "$1",
+        "example": "2.5"
+      }
+    }
+  },
+  "CMDVideoREC": {
+    "message": "您可以選擇{螢幕、視窗、網頁分頁}的其中一項，並進行錄製",
+    "description": "Record the screen, window, tabs to a video file."
+  },
+  "CMDVideoRECOptions": {
+    "message": "更改寬度、高度、FPS(每秒畫幾幀)。不鼓勵修改寬度和高度，這將會導致您得到較差的畫質。",
+    "description": "Change the width, height, and FPS. I don't encourage you to change the width and height since it will get lower quality."
+  },
+  "CMDVideoRECOptionsFPS": {
+    "message": "推薦選項！預設值為:25",
+    "description": "Recommended option! Default is 25."
+  },
+  "CMDBM": {
+    "message": "您可以使用此指令來快速地打開書籤的連結",
+    "description": "You can use this command to help you quickly open the URL of the bookmark that you made."
+  }
+}

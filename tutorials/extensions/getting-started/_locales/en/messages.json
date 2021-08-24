@@ -1,0 +1,44 @@
+/*
+https://developer.chrome.com/docs/extensions/reference/i18n/
+
+messages.json. Only the // https://developer.chrome.com/docs/extensions/mv3/i18n-messages/
+  - "name"
+  - "message"
+fields are required.
+*/
+
+{
+  "name": { // only the "name" and "message" are required
+    "message": "name->message",
+    "description": "name->description",
+    "placeholders": { // This is an addition, for example, "Hi {{user}}" we hope it can contain the variable instead of the hard code totally.// https://developer.chrome.com/docs/extensions/mv3/i18n-messages/
+      "placeholder_name": {
+        "content": "name->placeholders->placeholder_name->content",
+        "example": "name->placeholders->placeholder_name->example"
+      }
+    }
+  },
+  "hello": {
+    // "message": "Hello, $USER$  Welcoming $OURSITE$. $EMOJI$", // Use "$" to wrap the variables
+    "message": "<b>Hello</b> $USER$ Welcoming $OUR_SITE$. $EMOJI$", // Use "$" to wrap the variables
+    "description": "Greet the user",
+    "placeholders": {
+      "user": { // variable name
+        "content": "$1", // chrome.i18n.getMessage("hello", "variable 1")
+        "example": "Carson"
+      },
+      "our_site": {
+        "content": "Example.com"
+      },
+      "emoji": {
+        "content": "$2",
+        "example": "\uD83D\uDE42" // 🙂, 😎
+      }
+    }
+  },
+  "app": {
+    "message": "My cool APP.", // chrome.i18n.getMessage("app") // output: My cool APP.
+    "description": "description"
+  }
+}
+
