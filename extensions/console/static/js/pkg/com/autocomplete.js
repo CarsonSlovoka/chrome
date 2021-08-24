@@ -287,7 +287,7 @@ ${icon}${htmlContent}${desc}
 
         fragRow.querySelector(`div`).onclick = (e) => {
           const target = e.target
-          if (target.tagName === "A") {
+          if (target.tagName !== "DIV") {
             return
           }
           inp.value = target.querySelector(`input`).value
