@@ -11,7 +11,7 @@ class CanvasRecord {
       // audioBitsPerSecond : 128000,
       // videoBitsPerSecond : 2500000,
       // bitsPerSecond:2500000,
-      mimeType : mediaType,
+      mimeType: mediaType,
     })
     this.chunks = []
   }
@@ -78,7 +78,8 @@ export class RTCMediaRecorder { // real time communicate
    * @param {boolean} display
    * */
   constructor(parentNode,
-              {width = undefined, height = undefined, fps = 25,
+              {
+                width = undefined, height = undefined, fps = 25,
                 display = true,
               }) {
     this.#parentNode = parentNode
@@ -95,6 +96,106 @@ export class RTCMediaRecorder { // real time communicate
         this.#accessToRecord(id)
       }
     )
+  }
+
+  dumpOptionsInfo(mediaStream) {
+    const videoTrack = mediaStream.getVideoTracks()[0]
+    this.log("Track settings:")
+    this.log(JSON.stringify(videoTrack.getSettings(), null, 2))
+    this.log("Track constraints:")
+    this.log(JSON.stringify(videoTrack.getConstraints(), null, 2))
+  }
+
+  log(msg) {
+    const frag = document.createRange().createContextualFragment(`<pre>${msg}</pre>`)
+    this.#parentNode.append(frag)
+  }
+
+  async StartRecordingMedia() {
+    const mediaStream = await navigator.mediaDevices.getDisplayMedia({
+      video: {
+        // width: {ideal: 600, max: 1920 },
+        // height: {ideal: 400, max: 1080 },
+        frameRate: this.#constraints.fps,
+        cursor: "always" // "opera" support only
+      },
+      audio: true
+    })
+    this.dumpOptionsInfo(mediaStream)
+    const video = document.createElement(`video`)
+    video.srcObject = mediaStream // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject#supporting_fallback_to_the_src_property
+    video.muted = true // otherwise will conflict the device (both sides with voice)
+    if (!this.#constraints.display) {
+      video.style.visibility = "hidden"
+    }
+
+    const [track] = mediaStream.getVideoTracks()
+    track.onended = (e) => {
+      // Click the stop button, which was created by the system.
+      const tracks = mediaStream.getTracks()
+      tracks.forEach(track => track.stop()) // stop audio and video
+      video.srcObject = null
+      video.remove()
+    }
+
+    this.#parentNode.append(video)
+
+    const chunks = []
+    const videoStream = video.captureStream()
+    const mediaRecorder = new MediaRecorder(videoStream, {
+      // mimeType : "video/webm",
+    })
+
+    mediaRecorder.ondataavailable = e => {
+      chunks.push(e.data)
+    }
+
+    mediaRecorder.onstop = async (event) => {
+      const blob = new Blob(chunks, {
+        type: mediaRecorder.mimeType
+      })
+
+      const blobURL = URL.createObjectURL(blob)
+
+      const frag = document.createRange().createContextualFragment(`<video controls>
+<source src="${blobURL}">
+</video>
+<div>
+<a href="${blobURL}" download="result.webm"><button class="btn btn-primary">result.webm</button></a>
+<button data-name="release" class="ms-3 btn btn-primary">${chrome.i18n.getMessage("ReleaseResource")}</button>
+</div>
+
+`)
+
+      frag.querySelector(`button[data-name="release"]`).onclick = (e) => {
+        if (blobURL.startsWith("blob")) {
+          URL.revokeObjectURL(blobURL)
+        }
+      }
+
+      this.#parentNode.append(frag)
+    }
+
+    video.onloadedmetadata = (e) => {
+      video.width = this.#constraints.width ?? video.clientWidth
+      video.height = this.#constraints.height ?? video.clientHeight
+      video.play()
+      video.controls = true
+      mediaRecorder.start()
+    }
+
+    video.addEventListener("play", (event) => {
+      if (mediaRecorder.state === "inactive") {
+        return
+      }
+      mediaRecorder.resume()
+    })
+    video.addEventListener("pause", (event) => {
+      if (mediaRecorder.state === "inactive") {
+        return
+      }
+      mediaRecorder.pause()
+    })
   }
 
   /**

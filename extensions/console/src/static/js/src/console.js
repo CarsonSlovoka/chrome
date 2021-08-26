@@ -88,7 +88,7 @@ class CommandCenter {
         }
       ),
       new Cmd("chrome", ["chrome"], chrome.i18n.getMessage("CMDChromeHTML"),
-        (expression) => {
+        async (expression) => {
           const argObj = ArgumentParser(expression)
 
           const showChromeHelp = () => {
@@ -176,7 +176,7 @@ class CommandCenter {
           showLayerInfo(treeNode)
         })
       }),
-      new Cmd("video", ["video"], chrome.i18n.getMessage("CMDVideo"), (expression) => {
+      new Cmd("video", ["video"], chrome.i18n.getMessage("CMDVideo"), async (expression) => {
         const argObj = ArgumentParser(expression)
 
         const showVideoHelp = () => {
@@ -189,7 +189,7 @@ class CommandCenter {
           ])
         }
 
-        if (argObj === undefined || argObj.h || argObj.help) {
+        if (argObj === undefined || argObj.help) {
           showVideoHelp()
           return
         }
@@ -213,7 +213,7 @@ class CommandCenter {
             display: argObj.display ?? true,
           }
           const rec = new Rec.RTCMediaRecorder(document.getElementById(`msg-area`), videoOptions)
-          rec.chooseDesktopMedia()
+          await rec.StartRecordingMedia()
         }
       })
     ]

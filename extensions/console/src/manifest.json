@@ -19,8 +19,7 @@
   "permissions": [
     "activeTab",
     "tabs",
-    "bookmarks",
-    "desktopCapture"
+    "bookmarks"
   ],
 
   "content_scripts": [
