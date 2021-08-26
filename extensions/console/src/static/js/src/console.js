@@ -211,6 +211,7 @@ class CommandCenter {
             height: argObj.height ?? argObj.h,
             fps: argObj.fps ?? argObj.f ?? 25,
             display: argObj.display ?? true,
+            debug: argObj.debug ?? false,
           }
           const rec = new Rec.RTCMediaRecorder(document.getElementById(`msg-area`), videoOptions)
           await rec.StartRecordingMedia()

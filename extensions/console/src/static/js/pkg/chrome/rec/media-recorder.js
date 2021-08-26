@@ -76,14 +76,20 @@ export class RTCMediaRecorder { // real time communicate
    * @param {Number} height
    * @param {Number} fps
    * @param {boolean} display
+   * @param {boolean} debug  show settings and constraint
    * */
   constructor(parentNode,
               {
                 width = undefined, height = undefined, fps = 25,
                 display = true,
+                debug = false,
               }) {
     this.#parentNode = parentNode
-    this.#constraints = {width, height, fps, display}
+    this.#constraints = {
+      width, height, fps,
+      display,
+      debug
+    }
   }
 
   /**
@@ -121,7 +127,9 @@ export class RTCMediaRecorder { // real time communicate
       },
       audio: true
     })
-    this.dumpOptionsInfo(mediaStream)
+    if (this.#constraints.debug) {
+      this.dumpOptionsInfo(mediaStream)
+    }
     const video = document.createElement(`video`)
     video.srcObject = mediaStream // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject#supporting_fallback_to_the_src_property
     video.muted = true // otherwise will conflict the device (both sides with voice)
