@@ -183,6 +183,7 @@ class CommandCenter {
           this.addTable([chrome.i18n.getMessage("Commands"), chrome.i18n.getMessage("Desc")], [
             [`<kbd data-click-typing='video -speed=2.5'>video -speed=2.5</kbd>`, chrome.i18n.getMessage("CMDVideoSpeedExample", "2.5"),],
             ["rec", "<hr>"],
+            [`<kbd data-click-typing='video -rec -controller'>video -rec -controller</kbd>`, chrome.i18n.getMessage("CMDVideoRECController")],
             [`<kbd data-click-typing='video -rec -width=200 -height=200 -fps=1'>video -rec -width=200 -height=200 -fps=1</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptions")],
             [`<kbd data-click-typing='video -rec -w=200 -h=200 -f=1'>video -rec -w=200 -h=200 -f=1</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptions")],
             [`<kbd data-click-typing='video -rec -f=1'>video -rec -f=1</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptionsFPS")]
@@ -213,8 +214,14 @@ class CommandCenter {
             display: argObj.display ?? true,
             debug: argObj.debug ?? false,
           }
-          const rec = new Rec.RTCMediaRecorder(document.getElementById(`msg-area`), videoOptions)
-          await rec.StartRecordingMedia()
+
+          const parentNode = document.getElementById(`msg-area`)
+          if (argObj.controller) {
+            Rec.RTCMediaRecorder.DisplayController(parentNode, argObj.debug ?? false)
+          } else {
+            const rec = new Rec.RTCMediaRecorder(parentNode, videoOptions)
+            await rec.StartRecordingMedia()
+          }
         }
       })
     ]
@@ -410,11 +417,14 @@ async function CreateAutocomplete() {
       [`<span>🎮</span>game`]: [`<i class="fas fa-running"></i>dino<small>A small game for you to relax.</small>`]
     },
     [`<i class="fas fa-info-circle" style="color: #0088ff"></i>help`]: [],
-    [`<i class="fab fab fa-youtube" style="color: #ff0000"></i>video`]: [
-      `<i class="fas fa-question-circle" style="color: #0088ff"></i>-help<small>${chrome.i18n.getMessage("Help")}</small>`,
-      `<i class=\"fas fa-angle-double-right\"></i>-speed=<small>${chrome.i18n.getMessage("PlaybackRate")}</small>`,
-      `<span>📹</span>-rec<small>${chrome.i18n.getMessage("CMDVideoREC")}</small>`
-    ],
+    [`<i class="fab fab fa-youtube" style="color: #ff0000"></i>video`]: {
+      [`<i class="fas fa-question-circle" style="color: #0088ff"></i>-help<small>${chrome.i18n.getMessage("Help")}</small>`]: [],
+      [`<i class=\"fas fa-angle-double-right\"></i>-speed=<small>${chrome.i18n.getMessage("PlaybackRate")}</small>`]: [],
+      [`<span>📹</span>-rec<small>${chrome.i18n.getMessage("CMDVideoREC")}</small>`]: [
+        "<span>🕹️</span>-controller",
+        "<span>🕹️🕷️</span>-controller -debug"
+      ]
+    },
     [`<i class="fas fa-calculator"></i>=<small>${chrome.i18n.getMessage("CMDArithmeticHint")}</small>`]: [],
   }
   return new Autocomplete(document.querySelector(`div[data-com="autocomplete"]`), autocompleteTable)

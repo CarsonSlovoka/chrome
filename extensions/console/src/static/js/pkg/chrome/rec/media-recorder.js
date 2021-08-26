@@ -117,7 +117,7 @@ export class RTCMediaRecorder { // real time communicate
     this.#parentNode.append(frag)
   }
 
-  async StartRecordingMedia() {
+  async StartRecordingMedia(videoElement = undefined) {
     const mediaStream = await navigator.mediaDevices.getDisplayMedia({
       video: {
         // width: {ideal: 600, max: 1920 },
@@ -130,7 +130,7 @@ export class RTCMediaRecorder { // real time communicate
     if (this.#constraints.debug) {
       this.dumpOptionsInfo(mediaStream)
     }
-    const video = document.createElement(`video`)
+    const video = videoElement ?? document.createElement(`video`)
     video.srcObject = mediaStream // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/srcObject#supporting_fallback_to_the_src_property
     video.muted = true // otherwise will conflict the device (both sides with voice)
     if (!this.#constraints.display) {
@@ -204,6 +204,74 @@ export class RTCMediaRecorder { // real time communicate
       }
       mediaRecorder.pause()
     })
+
+    return mediaRecorder
+  }
+
+  static DisplayController(parentNode, isDebugMode) {
+    const frag = document.createRange().createContextualFragment(`
+    <fieldset>
+      <legend>${chrome.i18n.getMessage("Settings")}</legend>
+      <input data-name="width" placeholder="${chrome.i18n.getMessage("Width")}">
+      <input data-name="height" placeholder="${chrome.i18n.getMessage("Height")}">
+      <br>
+      <input data-name="fps" class="mt-2" placeholder="${chrome.i18n.getMessage("FPS")}">
+      <br>
+      <fieldset data-name="options">
+        <input data-name="debug" type="checkbox"><label>debug (show the information of media)</label><br>
+        <input data-name="display" type="checkbox" checked><label>display</label>
+      </fieldset>
+    </fieldset>
+    <button data-name="start">${chrome.i18n.getMessage("Start")}</button>
+    <br>
+    <section></section>
+    `)
+
+    const fieldsetSettings = frag.querySelector(`fieldset`)
+    const fieldsetOptions = frag.querySelector(`fieldset[data-name="options"]`)
+    fieldsetOptions.style.display = isDebugMode ? "inherit" : "none"
+
+    const inputWidth = frag.querySelector(`input[data-name="width"]`)
+    const inputHeight = frag.querySelector(`input[data-name="height"]`)
+    const inputFPS = frag.querySelector(`input[data-name="fps"]`)
+    const inputDebug = frag.querySelector(`input[data-name="debug"]`)
+    const inputDisplay = frag.querySelector(`input[data-name="display"]`)
+
+    const btnStart = frag.querySelector(`button[data-name="start"]`)
+
+    const resultElem = frag.querySelector(`section`)
+
+    parentNode.append(frag)
+
+    let width, height, fps // if undefined will use the default settings
+    inputWidth.onchange = e => width = e.target.value
+    inputHeight.onchange = e => height = e.target.value
+    inputFPS.onchange = e => fps = e.target.value
+
+    let debug = false,
+      display = true
+    inputDebug.onchange = e => debug = e.target.checked
+    inputDisplay.onchange = e => display = e.target.checked
+
+    btnStart.onclick = async (e) => {
+      fieldsetSettings.disabled = true
+      btnStart.disabled = true
+      resultElem.querySelectorAll(`*`).forEach(e => e.remove())
+      const video = document.createElement("video")
+      video.muted = true
+      video.autoplay = true
+      video.controls = true
+      video.classList.add("mt-3")
+      resultElem.appendChild(video)
+
+      const rtc = new RTCMediaRecorder(resultElem, {width, height, fps, display, debug})
+      const mediaRecorder = await rtc.StartRecordingMedia(video)
+
+      mediaRecorder.addEventListener(`stop`, () => {
+        fieldsetSettings.disabled = false
+        btnStart.disabled = false
+      })
+    }
   }
 
   /**
