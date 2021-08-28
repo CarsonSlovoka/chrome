@@ -16,6 +16,10 @@
     "message": "系統訊息",
     "description": "System Message"
   },
+  "Result": {
+    "message": "結果",
+    "description": "Result"
+  },
   "Width": {
     "message": "寬",
     "description": "Width"

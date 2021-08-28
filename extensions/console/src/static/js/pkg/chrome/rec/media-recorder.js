@@ -170,12 +170,12 @@ export class RTCMediaRecorder { // real time communicate
 </video>
 <div>
 <a href="${blobURL}" download="result.webm"><button class="btn btn-primary">result.webm</button></a>
-<button data-name="release" class="ms-3 btn btn-primary">${chrome.i18n.getMessage("ReleaseResource")}</button>
+<button id="release" class="ms-3 btn btn-primary">${chrome.i18n.getMessage("ReleaseResource")}</button>
 </div>
 
 `)
 
-      frag.querySelector(`button[data-name="release"]`).onclick = (e) => {
+      frag.querySelector(`button[id="release"]`).onclick = (e) => {
         if (blobURL.startsWith("blob")) {
           URL.revokeObjectURL(blobURL)
         }
@@ -210,67 +210,94 @@ export class RTCMediaRecorder { // real time communicate
 
   static DisplayController(parentNode, isDebugMode) {
     const frag = document.createRange().createContextualFragment(`
+<form>
     <fieldset>
       <legend>${chrome.i18n.getMessage("Settings")}</legend>
-      <input data-name="width" placeholder="${chrome.i18n.getMessage("Width")}">
-      <input data-name="height" placeholder="${chrome.i18n.getMessage("Height")}">
+      <input id="width" type="number" max="9999" placeholder="${chrome.i18n.getMessage("Width")}">
+      <input id="height" type="number" max="9999" placeholder="${chrome.i18n.getMessage("Height")}">
       <br>
-      <input data-name="fps" class="mt-2" placeholder="${chrome.i18n.getMessage("FPS")}">
+      <input id="fps" type="number" min="0" class="mt-2" placeholder="${chrome.i18n.getMessage("FPS")}">
       <br>
-      <fieldset data-name="options">
-        <input data-name="debug" type="checkbox"><label>debug (show the information of media)</label><br>
-        <input data-name="display" type="checkbox" checked><label>display</label>
+      <fieldset id="options">
+        <input id="debug" type="checkbox"><label>debug (show the information of media)</label><br>
+        <input id="display" type="checkbox" checked><label>display</label>
       </fieldset>
+
+      <input type="submit" value="${chrome.i18n.getMessage("Start")}">
     </fieldset>
-    <button data-name="start">${chrome.i18n.getMessage("Start")}</button>
+</form>
     <br>
-    <section></section>
+    <section class="mt-2">
+        <video controls></video>
+    </section>
+    <fieldset>
+        <legend>${chrome.i18n.getMessage("Result")}</legend>
+        <details id="result" open></details>
+    </fieldset>
     `)
 
     const fieldsetSettings = frag.querySelector(`fieldset`)
-    const fieldsetOptions = frag.querySelector(`fieldset[data-name="options"]`)
+    const fieldsetOptions = frag.getElementById(`options`)
     fieldsetOptions.style.display = isDebugMode ? "inherit" : "none"
 
-    const inputWidth = frag.querySelector(`input[data-name="width"]`)
-    const inputHeight = frag.querySelector(`input[data-name="height"]`)
-    const inputFPS = frag.querySelector(`input[data-name="fps"]`)
-    const inputDebug = frag.querySelector(`input[data-name="debug"]`)
-    const inputDisplay = frag.querySelector(`input[data-name="display"]`)
+    const inputWidth = frag.getElementById(`width`)
+    const inputHeight = frag.getElementById(`height`)
+    const inputFPS = frag.getElementById(`fps`)
+    const inputDebug = frag.getElementById(`debug`)
+    const inputDisplay = frag.getElementById(`display`)
 
-    const btnStart = frag.querySelector(`button[data-name="start"]`)
+    const form = frag.querySelector(`form`)
+    const video = frag.querySelector("video")
 
-    const resultElem = frag.querySelector(`section`)
+    const resultElem = frag.getElementById(`result`)
 
     parentNode.append(frag)
 
-    let width, height, fps // if undefined will use the default settings
-    inputWidth.onchange = e => width = e.target.value
-    inputHeight.onchange = e => height = e.target.value
-    inputFPS.onchange = e => fps = e.target.value
+    let fps // if undefined will use the default settings
+    inputWidth.onchange = e => {
+      if (form.checkValidity()) {
+        video.width = e.target.value // will change the clientWidth also
+      }
+    }
+    inputHeight.onchange = e => {
+      if (form.checkValidity()) {
+        video.height = e.target.value
+      }
+    }
+    inputFPS.onchange = e => {
+      if (form.checkValidity()) {
+        fps = e.target.value
+      }
+    }
 
     let debug = false,
       display = true
     inputDebug.onchange = e => debug = e.target.checked
     inputDisplay.onchange = e => display = e.target.checked
 
-    btnStart.onclick = async (e) => {
+    form.onsubmit = async (e) => {
+      e.preventDefault()
       fieldsetSettings.disabled = true
-      btnStart.disabled = true
       resultElem.querySelectorAll(`*`).forEach(e => e.remove())
-      const video = document.createElement("video")
       video.muted = true
       video.autoplay = true
       video.controls = true
-      video.classList.add("mt-3")
       resultElem.appendChild(video)
 
-      const rtc = new RTCMediaRecorder(resultElem, {width, height, fps, display, debug})
-      const mediaRecorder = await rtc.StartRecordingMedia(video)
-
-      mediaRecorder.addEventListener(`stop`, () => {
-        fieldsetSettings.disabled = false
-        btnStart.disabled = false
+      const rtc = new RTCMediaRecorder(resultElem, {
+        width: video.clientWidth, height: video.clientHeight,
+        fps, display, debug
       })
+      try {
+        const mediaRecorder = await rtc.StartRecordingMedia(video)
+
+        mediaRecorder.addEventListener(`stop`, () => {
+          fieldsetSettings.disabled = false
+        })
+      } catch (err) {
+        fieldsetSettings.disabled = false
+      }
+      return false // cancel submit. use the form check the type of field only.
     }
   }
 

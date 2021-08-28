@@ -217,6 +217,7 @@ class CommandCenter {
 
           const parentNode = document.getElementById(`msg-area`)
           if (argObj.controller) {
+            this.Cls() // To avoid ID have existed already.
             Rec.RTCMediaRecorder.DisplayController(parentNode, argObj.debug ?? false)
           } else {
             const rec = new Rec.RTCMediaRecorder(parentNode, videoOptions)

@@ -16,6 +16,10 @@
     "message": "System Message",
     "description": "System Message"
   },
+  "Result": {
+    "message": "Result",
+    "description": "Result"
+  },
   "Width": {
     "message": "Width",
     "description": "Width"
