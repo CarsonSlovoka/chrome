@@ -2,7 +2,7 @@
   "name": "Console",
   "description": "You can type the command to help you do something.",
   "manifest_version": 3,
-  "version": "1.0.1.0",
+  "version": "1.0.1.1",
   "icons": {
     "16": "static/image/favicon/16.png",
     "32": "static/image/favicon/32.png",
