@@ -240,7 +240,7 @@ class CommandCenter {
 
   addTabInfo(tab) {
     const frag = this.addElem(`<img class="bg-white" src="${tab.favIconUrl}" alt="" style="max-width: 32px; max-height:32px"/>
-<a tabindex="0" class="text-decoration-none">${tab.title}</a>
+<a tabindex="0" class="text-decoration-none">${new Option(tab.title).innerHTML}</a>
 <small><button class="light-gray bg-red">Close</button></small>
 `,
       "div", {className: "mt-3", needAppend: false})
