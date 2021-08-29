@@ -1,0 +1,59 @@
+<input type="file" />
+
+<video></video>
+<video controls></video>
+
+<script>
+  (()=>{
+    const input = document.querySelector('input')
+    input.addEventListener('change',
+      (event) => {
+        const file = event.target.files[0]
+        const blob = new Blob(
+          [file],
+          {"type": file.type} // If the type is unknown, default is empty string.
+        )
+        // const blobURL = URL.createObjectURL(blob)
+
+        const fileReader = new FileReader()
+        fileReader.readAsArrayBuffer(blob) // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsArrayBuffer
+
+        fileReader.onloadend = (progressEvent) => {
+          const arrayBuffer = progressEvent.target.result // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/result
+          const AudioContext = window.AudioContext || window.webkitAudioContext // 可以跨瀏覽器
+          const audioCtx = new AudioContext()
+
+          /*
+          var oscillatorNode = audioCtx.createOscillator()
+          var gainNode = audioCtx.createGain()
+          var finish = audioCtx.destination
+           */
+
+          const source = audioCtx.createBufferSource() // audioCtx.createMediaElementSource(document.querySelector('video')) // audioCtx.createBufferSource()
+          const dest = audioCtx.createMediaStreamDestination()
+          const mediaRecorder = new MediaRecorder(dest.stream)
+
+          audioCtx.decodeAudioData(
+            arrayBuffer,
+            (buffer) => {
+              source.buffer = buffer;
+              source.connect(dest);
+              /*
+              source.playbackRate.value = 0.1;
+              source.loop = true;
+               */
+              mediaRecorder.start()
+              source.start(audioCtx.currentTime, 5, 3) // 5~8秒
+              const video = document.querySelector("video")
+              video.controls = true
+              video.srcObject = dest.stream
+            },
+            function(e){
+              console.log("Error with decoding audio data" + e.err);
+            }
+          )
+        }
+      }
+    )
+  })()
+</script>

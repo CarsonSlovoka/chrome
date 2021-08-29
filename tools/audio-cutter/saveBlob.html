@@ -1,0 +1,11 @@
+<script>
+  (()=>{
+    window.onload = () =>{
+      const video = document.createElement("video")
+      video.src = "blob:https://ani.gamer.com.tw/62e8331f-b64f-4eae-946b-e2f1727032ab" // blob url
+      video.onload = () => {
+        document.querySelector('body').append(video)
+      }
+    }
+  })()
+</script>
