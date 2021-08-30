@@ -125,7 +125,17 @@ export class RTCMediaRecorder { // real time communicate
         frameRate: this.#constraints.fps,
         cursor: "always" // "opera" support only
       },
-      audio: true
+      audio: {
+        autoGainControl: false,
+        echoCancellation: false,
+        noiseSuppression: false,
+        googEchoCancellation: false,
+        googAutoGainControl: false,
+        googAutoGainControl2: false,
+        googNoiseSuppression: false,
+        googHighpassFilter: false,
+        googTypingNoiseDetection: false,
+      }
     })
     if (this.#constraints.debug) {
       this.dumpOptionsInfo(mediaStream)
