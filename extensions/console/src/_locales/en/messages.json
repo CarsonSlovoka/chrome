@@ -16,7 +16,38 @@
     "message": "System Message",
     "description": "System Message"
   },
-
+  "Result": {
+    "message": "Result",
+    "description": "Result"
+  },
+  "Width": {
+    "message": "Width",
+    "description": "Width"
+  },
+  "Height": {
+    "message": "Height",
+    "description": "Height"
+  },
+  "FPS": {
+    "message": "FPS",
+    "description": "FPS"
+  },
+  "Start": {
+    "message": "Start",
+    "description": "Start"
+  },
+  "Stop": {
+    "message": "Stop",
+    "description": "Stop"
+  },
+  "Settings": {
+    "message": "Settings",
+    "description": "Settings"
+  },
+  "Optional": {
+    "message": "Optional",
+    "description": "Optional"
+  },
   "Desc": {
     "message": "Description",
     "description": "Description"
@@ -164,6 +195,10 @@
   "CMDVideoREC": {
     "message": "It allows you to record the screen, window, tabs to a video file.",
     "description": "It allows you to record the screen, window, tabs to a video file."
+  },
+  "CMDVideoRECController": {
+    "message": "Create a UI for you to set the parameters of recording.",
+    "description": "Create a UI for you to set the parameters of recording."
   },
   "CMDVideoRECOptions": {
     "message": "Change the width, height, and FPS. I don't encourage you to change the width and height since it will get lower quality.",

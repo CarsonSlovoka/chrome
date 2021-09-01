@@ -1,0 +1,4 @@
+
+[submodule "extensions/rec"]
+	path = extensions/rec
+	url = https://github.com/CarsonSlovoka/chrome-ext-rec.git

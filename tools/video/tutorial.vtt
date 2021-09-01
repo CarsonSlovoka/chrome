@@ -3,6 +3,7 @@ WEBVTT - I am comments
 NOTE
 https://www.w3.org/TR/webvtt1/#css-extensions-introduction
 ffmpeg -i result.webm -c copy output.mp4
+ffmpeg -i result.webm -c copy -c:a aac output.mp4
 comment 1
 comment 2
 still comment 1
