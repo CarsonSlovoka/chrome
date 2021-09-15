@@ -1,9 +1,9 @@
 (() => {
   chrome.windows.getCurrent((tabWindow) => { // https://developer.chrome.com/docs/extensions/reference/windows/#type-Window
     const targetURL = 'templates/console.html'
-    chrome.windows.getAll({populate : true, windowTypes:['popup']}, (windowArray)=>{
+    chrome.windows.getAll({populate: true, windowTypes: ['popup']}, (windowArray) => {
       const queryURL = `chrome-extension://${chrome.runtime.id}/${targetURL}`
-      const targetWindow = windowArray.find(item=>item.tabs[0].url === queryURL) // ❗ make sure manifest.json => permissions including "tabs"
+      const targetWindow = windowArray.find(item => item.tabs[0].url === queryURL) // ❗ make sure manifest.json => permissions including "tabs"
       if (windowArray.length > 0 && targetWindow !== undefined) {
         // Show the window that you made before.
         chrome.windows.update(targetWindow.id, {focused: true}) // https://developer.chrome.com/docs/extensions/reference/windows/#method-update
@@ -28,15 +28,6 @@
         }
       )
     })
-  })
-
-  chrome.commands.onCommand.addListener((cmdName) => {
-    switch (cmdName) {
-      case "show-console-screen":
-        break
-      default:
-        alert(`Unknown Command: ${cmdName}`)
-    }
   })
 })()
 

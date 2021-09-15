@@ -20,23 +20,17 @@
     "tabs",
     "bookmarks"
   ],
-
   "content_scripts": [
     {
       "matches": [
         "<all_urls>"
       ],
-      "js": ["static/js/src/scripting/video-controls.js"]
+      "js": [
+        "static/js/src/scripting/video-controls.js"
+      ]
     }
   ],
-
   "commands": {
-    "show-console-screen": {
-      "description": "show Console",
-      "suggested_key": {
-        "default": "Alt+C"
-      }
-    },
     "_execute_action": {
       "description": "This hotkey can quickly open the extension. (same as you click extension by mouse.)",
       "suggested_key": {
