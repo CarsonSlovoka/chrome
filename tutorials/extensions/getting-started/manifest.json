@@ -4,7 +4,8 @@
   // 👇 Required
   "manifest_version": 3,
   "name": "Getting Started Example",
-  "version": "1.0",
+  "version": "1.0.0",
+  "version_name": "1.0.0 Test", // <-- optional 這個如同version的別名，使用者安裝頁面看的到會是這個名稱，但不代表version就不需要，version還是要有，而這個別名為可選項
   // 👇 Recommended
   "author": "Carson",
   "description": "Build an Extension!",
