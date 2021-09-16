@@ -241,12 +241,12 @@ class CommandCenter {
   addTabInfo(tab) {
     const frag = this.addElem(`<img class="bg-white" src="${tab.favIconUrl}" alt="" style="max-width: 32px; max-height:32px"/>
 <a tabindex="0" class="text-decoration-none">${new Option(tab.title).innerHTML}</a>
-<small><button class="light-gray bg-red">Close</button></small>
+<small><i class="ms-2 far fa-trash-alt hover-red" title="${chrome.i18n.getMessage("CloseTab")}"></i></small>
 `,
       "div", {className: "mt-3", needAppend: false})
 
     const a = frag.querySelector('a')
-    const closeBtn = frag.querySelector('button')
+    const closeBtn = frag.querySelector('i')
     const curFlag = frag.querySelector('div[class^="mt-3"]')
     a.onclick = () => {
       this.showExistsTab(tab)
