@@ -85,6 +85,10 @@
     "message": "Example",
     "description": "Example"
   },
+  "CloseTab": {
+    "message": "Close Tab",
+    "description": "Close Tab"
+  },
 
   "BMDesc": {
     "message": "Show the bookmark by hierarchy.",
@@ -173,9 +177,15 @@
     "message": "Calculator",
     "description": "Calculator"
   },
-  "CMDArithmeticHint": {
-    "message": "Try typing \"= -help\" to see how to use it.",
-    "description": "Try typing \"= -help\" to see how to use it."
+  "TryTypingXXXToSeeIt": {
+    "message": "Try typing \"$XXX$\" to see how to use it.",
+    "description": "Try typing \"$XXX$\" to see how to use it.",
+    "placeholders": {
+      "xxx": {
+        "content": "$1",
+        "example": "= -help"
+      }
+    }
   },
 
   "CMDVideo": {
