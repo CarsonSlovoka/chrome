@@ -1,5 +1,11 @@
 # Release Note
 
+## 1.0.2.0
+
+- Delete unused permission: "activeTab"
+- i18n: support zh_CN
+
+
 ## 1.0.1.2
 
 First published to the *public*.

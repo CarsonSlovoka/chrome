@@ -2,7 +2,7 @@
   "name": "Console",
   "description": "You can type the command to help you do something.",
   "manifest_version": 3,
-  "version": "1.0.1.2",
+  "version": "1.0.2.0",
   "icons": {
     "16": "static/image/favicon/16.png",
     "32": "static/image/favicon/32.png",
@@ -17,28 +17,20 @@
     "service_worker": "service-worker.js"
   },
   "permissions": [
-    "activeTab",
     "tabs",
     "bookmarks"
   ],
-
   "content_scripts": [
     {
       "matches": [
-        "http://*/*",
-        "https://*/*"
+        "<all_urls>"
       ],
-      "js": ["static/js/src/scripting/video-controls.js"]
+      "js": [
+        "static/js/src/scripting/video-controls.js"
+      ]
     }
   ],
-
   "commands": {
-    "show-console-screen": {
-      "description": "show Console",
-      "suggested_key": {
-        "default": "Alt+C"
-      }
-    },
     "_execute_action": {
       "description": "This hotkey can quickly open the extension. (same as you click extension by mouse.)",
       "suggested_key": {

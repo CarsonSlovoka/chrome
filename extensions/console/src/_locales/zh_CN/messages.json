@@ -1,6 +1,6 @@
 {
   "UnknownCommand": {
-    "message": "無此指令: $CMD_NAME$",
+    "message": "无此指令: $CMD_NAME$",
     "description": "Unknown command",
     "placeholders": {
       "cmd_name": {
@@ -9,19 +9,19 @@
     }
   },
   "ReleaseResource": {
-    "message": "釋放資源",
+    "message": "释放资源",
     "description": "Release the resource"
   },
   "SystemMessage": {
-    "message": "系統訊息",
+    "message": "系统讯息",
     "description": "System Message"
   },
   "Result": {
-    "message": "結果",
+    "message": "结果",
     "description": "Result"
   },
   "Width": {
-    "message": "寬",
+    "message": "宽",
     "description": "Width"
   },
   "Height": {
@@ -29,23 +29,23 @@
     "description": "Height"
   },
   "FPS": {
-    "message": "每秒幾幀",
+    "message": "每秒几帧",
     "description": "FPS"
   },
   "Start": {
-    "message": "開始",
+    "message": "开始",
     "description": "Start"
   },
   "Stop": {
-    "message": "結束",
+    "message": "结束",
     "description": "Stop"
   },
   "Settings": {
-    "message": "設定",
+    "message": "设定",
     "description": "Settings"
   },
   "Optional": {
-    "message": "可選項",
+    "message": "可选项",
     "description": "Optional"
   },
   "Desc": {
@@ -53,7 +53,7 @@
     "description": "Description"
   },
   "Help": {
-    "message": "幫助",
+    "message": "帮助",
     "description": "Help"
   },
   "Commands": {
@@ -66,11 +66,11 @@
   },
 
   "Variable": {
-    "message": "變數",
+    "message": "变数",
     "description": "Variable"
   },
   "Operator": {
-    "message": "運算子",
+    "message": "运算子",
     "description": "Operator"
   },
   "Value": {
@@ -78,70 +78,70 @@
     "description": "Value"
   },
   "Function": {
-    "message": "函數",
+    "message": "函数",
     "description": "Function"
   },
   "Example": {
-    "message": "範例",
+    "message": "范例",
     "description": "Example"
   },
   "CloseTab": {
-    "message": "關閉頁籤",
+    "message": "关闭页签",
     "description": "Close Tab"
   },
 
   "BMDesc": {
-    "message": "用層級結構的方式顯示書籤",
+    "message": "用层级结构的方式显示书签",
     "description": "Show the bookmark by hierarchy."
   },
   "BMFileDesc": {
-    "message": "顯示所有書籤內容(不含資料夾、不做分層)",
+    "message": "显示所有书签内容(不含资料夹、不做分层)",
     "description": "Show bookmark list in once. (File only)"
   },
   "BMAllDesc": {
-    "message": "顯示所有書籤內容(不做分層)",
+    "message": "显示所有书签内容(不做分层)",
     "description": "Show bookmark list in once."
   },
 
   "ManageBM": {
-    "message": "管理書籤",
+    "message": "管理书签",
     "description": "Manage bookmarks"
   },
   "ManageBMHTML": {
-    "message": "管理<code>書籤</code>",
+    "message": "管理<code>书签</code>",
     "description": "Manage <code>bookmarks</code>"
   },
   "MangeChromeExtension": {
-    "message": "管理chrome的擴充功能(插件)",
+    "message": "管理chrome的扩充功能(插件)",
     "description": "Manage the chrome extension"
   },
 
   "ChromeAbout": {
-    "message": "顯示所有Chrome內建的URL清單",
+    "message": "显示所有Chrome内建的URL清单",
     "description": "List of Chrome URLs"
   },
   "ChromeVersionHTML": {
-    "message": "Chrome<code>版號</code>資訊",
+    "message": "Chrome<code>版号</code>资讯",
     "description": "<code>Version</code> of Google Chrome"
   },
   "ChromeSettingsHTML": {
-    "message": "Google Chrome<code>設定</code>",
+    "message": "Google Chrome<code>设定</code>",
     "description": "<code>Settings</code> of Google Chrome"
   },
   "ChromeSetLangHTML": {
-    "message": "設定<kbd>語言</kbd>",
+    "message": "设定<kbd>语言</kbd>",
     "description": "settings of the <kbd>language</kbd>."
   },
   "ChromeExtHTML": {
-    "message": "管理Chrome的<code>擴充功能</code>",
+    "message": "管理Chrome的<code>扩充功能</code>",
     "description": "Manage the chrome <code>extensions</code>"
   },
   "ChromeExtHotkeyHTML": {
-    "message": "擴充功能的<b>快捷鍵</b>設定",
+    "message": "扩充功能的<b>快捷键</b>设定",
     "description": "Manage the hotkey of the extension."
   },
   "ChromeHistoryHTML": {
-    "message": "<code>歷史</code>瀏覽紀錄",
+    "message": "<code>历史</code>浏览纪录",
     "description": "Web browsing <code>history</code>"
   },
 
@@ -151,34 +151,34 @@
   },
 
   "CMDList": {
-    "message": "顯示所有分頁的標題名稱",
+    "message": "显示所有分页的标题名称",
     "description": "Show the title of each tab."
   },
 
   "CMDCls": {
-    "message": "清除畫面",
+    "message": "清除画面",
     "description": "Clear the screen."
   },
   "CMDClsHTML": {
-    "message": "<b>清除</b>畫面",
+    "message": "<b>清除</b>画面",
     "description": "Clear the screen."
   },
 
   "CMDHelp": {
-    "message": "顯示所有命令",
+    "message": "显示所有命令",
     "description": "Show all command lists."
   },
   "CMDChromeHTML": {
-    "message": "Chrome內建所提供的URL指令<br>您可以輸入<kbd>chrome -h</kbd>取得更完整的訊息",
+    "message": "Chrome内建所提供的URL指令<br>您可以输入<kbd>chrome -h</kbd>取得更完整的讯息",
     "description": "The URLs provide by chrome.<br>Please use the <kbd>chrome -h</kbd> to see all full commands."
   },
 
   "CMDArithmetic": {
-    "message": "小算盤",
+    "message": "小算盘",
     "description": "Calculator"
   },
   "TryTypingXXXToSeeIt": {
-    "message": "試試\"$XXX$\"來查看該如何使用",
+    "message": "试试\"$XXX$\"来查看该如何使用",
     "description": "Try typing \"$XXX$\" to see how to use it.",
     "placeholders": {
       "xxx": {
@@ -189,11 +189,11 @@
   },
 
   "CMDVideo": {
-    "message": "一些有關視頻的操作",
+    "message": "一些有关视频的操作",
     "description": "Do some control of the video."
   },
   "CMDVideoSpeedExample": {
-    "message": "將視頻的撥放速度調整至$N$倍",
+    "message": "将视频的拨放速度调整至$N$倍",
     "description": "Change the video speed to $N$ times faster than the original.",
     "placeholders": {
       "N": {
@@ -203,23 +203,23 @@
     }
   },
   "CMDVideoREC": {
-    "message": "您可以選擇{螢幕、視窗、網頁分頁}的其中一項，並進行錄製",
+    "message": "您可以选择{萤幕、视窗、网页分页}的其中一项，并进行录制",
     "description": "Record the screen, window, tabs to a video file."
   },
   "CMDVideoRECController": {
-    "message": "建立一個使用者介面，使您能設置要錄製的參數",
+    "message": "建立一个使用者介面，使您能设置要录制的参数",
     "description": "Create a UI for you to set the parameters of recording."
   },
   "CMDVideoRECOptions": {
-    "message": "更改寬度、高度、FPS(每秒畫幾幀)。不鼓勵修改寬度和高度，這將會導致您得到較差的畫質。",
+    "message": "更改宽度、高度、FPS(每秒画几帧)。不鼓励修改宽度和高度，这将会导致您得到较差的画质。",
     "description": "Change the width, height, and FPS. I don't encourage you to change the width and height since it will get lower quality."
   },
   "CMDVideoRECOptionsFPS": {
-    "message": "推薦選項！預設值為:25",
+    "message": "推荐选项！预设值为:25",
     "description": "Recommended option! Default is 25."
   },
   "CMDBM": {
-    "message": "您可以使用此指令來快速地打開書籤的連結",
+    "message": "您可以使用此指令来快速地打开书签的连结",
     "description": "You can use this command to help you quickly open the URL of the bookmark that you made."
   }
 }

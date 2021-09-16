@@ -241,12 +241,12 @@ class CommandCenter {
   addTabInfo(tab) {
     const frag = this.addElem(`<img class="bg-white" src="${tab.favIconUrl}" alt="" style="max-width: 32px; max-height:32px"/>
 <a tabindex="0" class="text-decoration-none">${new Option(tab.title).innerHTML}</a>
-<small><button class="light-gray bg-red">Close</button></small>
+<small><i class="ms-2 far fa-trash-alt hover-red" title="${chrome.i18n.getMessage("CloseTab")}"></i></small>
 `,
       "div", {className: "mt-3", needAppend: false})
 
     const a = frag.querySelector('a')
-    const closeBtn = frag.querySelector('button')
+    const closeBtn = frag.querySelector('i')
     const curFlag = frag.querySelector('div[class^="mt-3"]')
     a.onclick = () => {
       this.showExistsTab(tab)
@@ -397,7 +397,7 @@ async function CreateAutocomplete() {
     [`<i class="fas fa-eraser"></i>cls<small>${chrome.i18n.getMessage("CMDCls")}</small>`]: [],
     [`<span>📋</span>list`]: [],
     [`<span>📋</span>ls`]: [],
-    [`<i class="fab fa-chrome"></i>chrome`]: {
+    [`<i class="fab fa-chrome"></i>chrome<small>${chrome.i18n.getMessage("TryTypingXXXToSeeIt", "= -h")}</small>`]: {
       [`about<small>${chrome.i18n.getMessage("ChromeAbout")}</small>`]: [],
       [`<span>⭐</span>bookmarks<small>${chrome.i18n.getMessage("ManageBM")}</small>`]: [],
       version: [],
@@ -418,7 +418,7 @@ async function CreateAutocomplete() {
       [`<span>🎮</span>game`]: [`<i class="fas fa-running"></i>dino<small>A small game for you to relax.</small>`]
     },
     [`<i class="fas fa-info-circle" style="color: #0088ff"></i>help`]: [],
-    [`<i class="fab fab fa-youtube" style="color: #ff0000"></i>video`]: {
+    [`<i class="fab fab fa-youtube" style="color: #ff0000"></i>video<small>${chrome.i18n.getMessage("TryTypingXXXToSeeIt", "= -help")}</small>`]: {
       [`<i class="fas fa-question-circle" style="color: #0088ff"></i>-help<small>${chrome.i18n.getMessage("Help")}</small>`]: [],
       [`<i class=\"fas fa-angle-double-right\"></i>-speed=<small>${chrome.i18n.getMessage("PlaybackRate")}</small>`]: [],
       [`<span>📹</span>-rec<small>${chrome.i18n.getMessage("CMDVideoREC")}</small>`]: [
@@ -426,7 +426,7 @@ async function CreateAutocomplete() {
         "<span>🕹️🕷️</span>-controller -debug"
       ]
     },
-    [`<i class="fas fa-calculator"></i>=<small>${chrome.i18n.getMessage("CMDArithmeticHint")}</small>`]: [],
+    [`<i class="fas fa-calculator"></i>=<small>${chrome.i18n.getMessage("TryTypingXXXToSeeIt", "= -h")}</small>`]: [],
   }
   return new Autocomplete(document.querySelector(`div[data-com="autocomplete"]`), autocompleteTable)
 }
