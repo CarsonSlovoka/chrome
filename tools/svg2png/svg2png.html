@@ -1,4 +1,15 @@
 <div><input type='file' accept='.png,.jpg'></div>
+
+<fieldset id="png-area">
+  <legend>16, 32, 48, 128</legend>
+</fieldset>
+
+<fieldset>
+  <legend>Fontawesome SVG</legend>
+  <i class="far fa-keyboard" style="background:none;color:#ffce47"></i>
+</fieldset>
+
+
 <script>
   /*
   source from : https://gist.github.com/CarsonSlovoka/81195ea3c04edbaa02b35b0678aa7038
@@ -85,7 +96,7 @@
           }
 
           const a = document.createElement('a')
-          document.querySelector('body').append(a)
+          document.querySelector('#png-area').append(a)
           a.innerText = filename
           a.download = filename
 
@@ -114,7 +125,7 @@
      **/
     constructor(w, h) {
       const canvas = document.createElement("canvas")
-      document.querySelector(`body`).append(canvas)
+      document.querySelector(`#png-area`).append(canvas)
       this.canvas = canvas;
       [this.canvas.width, this.canvas.height] = [w, h]
     }
@@ -159,8 +170,8 @@
     document.querySelector("head").append(frag)
   }
 
-  function AddElem2Body(nodeName) {
-    document.querySelector(`body`).append(document.createElement(nodeName))
+  function AddElem2PngArea(nodeName) {
+    document.querySelector(`#png-area`).append(document.createElement(nodeName))
   }
 
   (() => {
@@ -191,15 +202,15 @@
         // await new Promise(resolve => setTimeout(resolve, 50))
       }
 
-      AddElem2Body("br")
+      AddElem2PngArea("br")
 
       // Exists SVG
       ImportFontAwesome()
       const range = document.createRange()
-      const iconClass = "fas fa-terminal"
-      const iconSizeArray = [16, 32, 48, 128] // https://developer.chrome.com/docs/extensions/mv3/manifest/icons/
-      const fragIcon = range.createContextualFragment(`<i class="${iconClass}" style="background-color:black;color:white"></i>`)
-      document.querySelector(`body`).append(fragIcon)
+      const iconClass = "far fa-keyboard" // <i class="far fa-keyboard"></i>
+      const iconSizeArray = [16, 32, 48, 128, [384, 256]] // https://developer.chrome.com/docs/extensions/mv3/manifest/icons/
+      const fragIcon = range.createContextualFragment(`<i class="${iconClass}" style="background:none;color:#ffce47"></i>`)
+      document.querySelector(`#png-area`).append(fragIcon)
 
       const observer = new MutationObserver((mutationRecordList, observer) => {
         for (const mutation of mutationRecordList) {
@@ -207,8 +218,9 @@
             case "childList":
               const targetSVG = mutation.target.querySelector(`svg`)
               if (targetSVG !== null) {
-                for (const iconSize of iconSizeArray) {
-                  const canvas = new Canvas(iconSize, iconSize)
+                for (let iconSize of iconSizeArray) {
+                  const [width, height] = Array.isArray(iconSize) ? iconSize : [iconSize, iconSize]
+                  const canvas = new Canvas(width, height)
                   const svg2img = new SVG2IMG(canvas.canvas, SVG2IMG.Convert2URIData(targetSVG), {})
                   svg2img.Build(`${canvas.canvas.width}.png`)
                 }
@@ -219,7 +231,7 @@
           }
         }
       })
-      observer.observe(document.querySelector(`body`), {childList: true})
+      observer.observe(document.querySelector(`#png-area`), {childList: true})
     }
   })()
 </script>
