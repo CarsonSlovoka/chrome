@@ -2,3 +2,6 @@
 [submodule "extensions/rec"]
 	path = extensions/rec
 	url = https://github.com/CarsonSlovoka/chrome-ext-rec.git
+[submodule "extensions/thunder"]
+	path = extensions/thunder
+	url = https://github.com/CarsonSlovoka/thunder.git
