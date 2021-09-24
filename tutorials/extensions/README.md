@@ -77,6 +77,11 @@
 ```
 
 
+##### [Can I use a SVG toolbar icon?](https://stackoverflow.com/q/53645087/9935654)
+
+- [Icon](https://developer.chrome.com/docs/extensions/reference/browserAction/#icon)
+
+
 #### Develop extensions and themes
 
 ##### [Declare permissions](https://developer.chrome.com/docs/extensions/mv3/declare_permissions/)
