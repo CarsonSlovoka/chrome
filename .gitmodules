@@ -5,3 +5,6 @@
 [submodule "extensions/thunder"]
 	path = extensions/thunder
 	url = https://github.com/CarsonSlovoka/thunder.git
+[submodule "extensions/cpt"]
+	path = extensions/cpt
+	url = https://github.com/CarsonSlovoka/cpt.git
