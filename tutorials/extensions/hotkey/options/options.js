@@ -1,13 +1,3 @@
-/*
-function Hotkey2({key = ""}) {
-  this.key = key
-
-  // chrome.storage 沒辦法獲得function的屬性，所以寫成這種this的方法沒用，改用class的static比較貼切
-  this.GetInfo = () => {
-  }
-}
- */
-
 class Hotkey {
 
   /**
