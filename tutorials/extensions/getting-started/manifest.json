@@ -11,7 +11,7 @@
   "description": "Build an Extension!",
   "default_locale": "en", // 這是指如果您當前的系統語系沒有找到合適的，那麼就會使用此預設的項目
   // zh_CN, zh_TW // https://developer.chrome.com/docs/extensions/mv3/manifest/default_locale/
-  "action": {
+  "action": { // 如果action沒有東西，那麼icons所提供的顏色會是灰色(disabled)
     "default_popup": "/src/tpl/popup.html",
     // "default_icon": "hello_extensions.png" // 可以只給一張圖片
     "default_icon": {
