@@ -1,12 +1,24 @@
-<div><input type='file' accept='.png,.jpg'></div>
-
-<fieldset id="png-area">
-  <legend>16, 32, 48, 128</legend>
+<fieldset>
+  <legend>Input the PNG to get other sizes.</legend>
+  <input type='file' accept='.png,.jpg'>
 </fieldset>
 
 <fieldset>
-  <legend>Fontawesome SVG</legend>
+  <legend>Input Fontawesome icon</legend>
   <i class="far fa-keyboard" style="background:none;color:#ffce47"></i>
+</fieldset>
+
+<fieldset id="svg-area">
+  <legend>Input the svgSVG tag</legend>
+  <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" width="120" height="120">
+    <ellipse cx="100" cy="50" rx="100" ry="50" fill="#ffaa00"/>
+  </svg>
+</fieldset>
+
+<fieldset>
+  <legend>output (16, 32, 48, 128)</legend>
+  <output>
+  </output>
 </fieldset>
 
 
@@ -30,7 +42,7 @@
     }
 
     /**
-     * @param {HTMLElement} node
+     * @param {Element} node
      * @param {string} mediaType: https://en.wikipedia.org/wiki/Media_type#Common_examples_%5B10%5D
      * @see https://en.wikipedia.org/wiki/List_of_URI_schemes
      * */
@@ -77,8 +89,10 @@
 
     /**
      * @description When the build is finished, you can click the filename to download the PNG or mouse enters to copy PNG to the clipboard.
+     * @param {Element} outputElem
+     * @param {string} filename
      * */
-    async Build(filename = "download.png") {
+    async Build(outputElem, filename = "download.png") {
       const img = new Image(/*this.canvas.width, this.canvas.height*/)
       img.src = this.src instanceof Blob ? URL.createObjectURL(this.src) : this.src
       img.crossOrigin = "anonymous" // Fixes: Tainted canvases may not be exported
@@ -96,7 +110,7 @@
           }
 
           const a = document.createElement('a')
-          document.querySelector('#png-area').append(a)
+          outputElem.append(a)
           a.innerText = filename
           a.download = filename
 
@@ -122,10 +136,13 @@
 
     /**
      * @description for do something like that: ``<canvas width="" height=""></>canvas>``
+     * @param {Number} w
+     * @param {Number} h
+     * @param {Element} outputElem
      **/
-    constructor(w, h) {
+    constructor(w, h, outputElem) {
       const canvas = document.createElement("canvas")
-      document.querySelector(`#png-area`).append(canvas)
+      outputElem.append(canvas)
       this.canvas = canvas;
       [this.canvas.width, this.canvas.height] = [w, h]
     }
@@ -170,12 +187,9 @@
     document.querySelector("head").append(frag)
   }
 
-  function AddElem2PngArea(nodeName) {
-    document.querySelector(`#png-area`).append(document.createElement(nodeName))
-  }
-
   (() => {
     window.onload = async () => {
+      const outputElem = document.querySelector(`output`)
 
       // Input
       const input = document.querySelector('input')
@@ -187,22 +201,21 @@
         )
 
         for (const iconSize of [16, 32, 48, 128]) {
-          const canvas = new Canvas(iconSize, iconSize)
+          const canvas = new Canvas(iconSize, iconSize, outputElem)
           const svg2img = new SVG2IMG(canvas.canvas, blob, {quality: "high"})
-          await svg2img.Build(`${canvas.canvas.width}.png`)
+          await svg2img.Build(outputElem, `${canvas.canvas.width}.png`)
         }
       }
 
-
       // Online
       for (const iconSize of [16, 32, 48, 128]) {
-        const canvas = new Canvas(iconSize, iconSize)
+        const canvas = new Canvas(iconSize, iconSize, outputElem)
         const svg2img = new SVG2IMG(canvas.canvas, "https://image.flaticon.com/icons/png/512/3585/3585618.png", {quality: "high"})
-        await svg2img.Build(`${canvas.canvas.width}.png`)
+        await svg2img.Build(outputElem, `${canvas.canvas.width}.png`)
         // await new Promise(resolve => setTimeout(resolve, 50))
       }
 
-      AddElem2PngArea("br")
+      outputElem.insertAdjacentHTML("beforeend", `<br>`)
 
       // Exists SVG
       ImportFontAwesome()
@@ -210,7 +223,7 @@
       const iconClass = "far fa-keyboard" // <i class="far fa-keyboard"></i>
       const iconSizeArray = [16, 32, 48, 128, [384, 256]] // https://developer.chrome.com/docs/extensions/mv3/manifest/icons/
       const fragIcon = range.createContextualFragment(`<i class="${iconClass}" style="background:none;color:#ffce47"></i>`)
-      document.querySelector(`#png-area`).append(fragIcon)
+      outputElem.append(fragIcon)
 
       const observer = new MutationObserver((mutationRecordList, observer) => {
         for (const mutation of mutationRecordList) {
@@ -220,9 +233,9 @@
               if (targetSVG !== null) {
                 for (let iconSize of iconSizeArray) {
                   const [width, height] = Array.isArray(iconSize) ? iconSize : [iconSize, iconSize]
-                  const canvas = new Canvas(width, height)
+                  const canvas = new Canvas(width, height, outputElem)
                   const svg2img = new SVG2IMG(canvas.canvas, SVG2IMG.Convert2URIData(targetSVG), {})
-                  svg2img.Build(`${canvas.canvas.width}.png`)
+                  svg2img.Build(outputElem, `${canvas.canvas.width}.png`)
                 }
                 targetSVG.remove()
                 observer.disconnect()
@@ -231,7 +244,17 @@
           }
         }
       })
-      observer.observe(document.querySelector(`#png-area`), {childList: true})
+      observer.observe(outputElem, {childList: true})
+
+      // SVG create by yourself
+      document.querySelector(`#svg-area`).querySelectorAll(`svg`).forEach(svg => {
+        for (let iconSize of iconSizeArray) {
+          const [width, height] = Array.isArray(iconSize) ? iconSize : [iconSize, iconSize]
+          const canvas = new Canvas(width, height, outputElem)
+          const svg2img = new SVG2IMG(canvas.canvas, SVG2IMG.Convert2URIData(svg), {})
+          svg2img.Build(outputElem, `${canvas.canvas.width}.png`)
+        }
+      })
     }
   })()
 </script>
