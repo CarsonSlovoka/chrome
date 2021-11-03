@@ -248,10 +248,12 @@
 
       // SVG create by yourself
       document.querySelector(`#svg-area`).querySelectorAll(`svg`).forEach(svg => {
+        const dataURI = SVG2IMG.Convert2URIData(svg) // https://yoksel.github.io/url-encoder/ 👈 It's a great viewer too.
+        console.log(dataURI)
         for (let iconSize of iconSizeArray) {
           const [width, height] = Array.isArray(iconSize) ? iconSize : [iconSize, iconSize]
           const canvas = new Canvas(width, height, outputElem)
-          const svg2img = new SVG2IMG(canvas.canvas, SVG2IMG.Convert2URIData(svg), {})
+          const svg2img = new SVG2IMG(canvas.canvas, dataURI, {})
           svg2img.Build(outputElem, `${canvas.canvas.width}.png`)
         }
       })
