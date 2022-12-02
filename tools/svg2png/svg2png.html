@@ -30,6 +30,8 @@
   source from : https://gist.github.com/CarsonSlovoka/81195ea3c04edbaa02b35b0678aa7038
   */
 
+  // chrome.inspect:
+  // network -> select -> preview -> mouse click right -> Copy image as data URI
   function GetSVGDataURI(svgElem) {
     const mediaType = 'data:image/svg+xml'
     const base64 = btoa(svgElem.outerHTML)
