@@ -5,14 +5,17 @@
 
 <fieldset>
   <legend>Input Fontawesome icon</legend>
-  <i class="far fa-keyboard" style="background:none;color:#ffce47"></i>
+  <i class="far fa-keyboard" style="background:none;color:#ffce47" onclick="GetSVGDataURI(this)"></i>
+  <i class="fa-solid fa-xmark" style="background:none;color:#ff927f" onclick="GetSVGDataURI(this)"></i>
 </fieldset>
 
 <fieldset id="svg-area">
   <legend>Input the svgSVG tag</legend>
-  <svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" width="120" height="120">
-    <ellipse cx="100" cy="50" rx="100" ry="50" fill="#ffaa00"/>
+  <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+    <circle fill="#aaaaaa" cx="50" cy="50" r="50"/>
+    <rect fill="#ffffff" x="15" y="37.5" width="70" height="25" rx="2" ry="2"/>
   </svg>
+
 </fieldset>
 
 <fieldset>
@@ -26,6 +29,12 @@
   /*
   source from : https://gist.github.com/CarsonSlovoka/81195ea3c04edbaa02b35b0678aa7038
   */
+
+  function GetSVGDataURI(svgElem) {
+    const mediaType = 'data:image/svg+xml'
+    const base64 = btoa(svgElem.outerHTML)
+    console.log(`${mediaType};base64,${base64}`)
+  }
 
   class SVG2IMG {
     /**
@@ -45,6 +54,7 @@
      * @param {Element} node
      * @param {string} mediaType: https://en.wikipedia.org/wiki/Media_type#Common_examples_%5B10%5D
      * @see https://en.wikipedia.org/wiki/List_of_URI_schemes
+     * `data:image/svg+xml;base64,${btoa(document.querySelector(`svg`).outerHTML)}`
      * */
     static Convert2URIData(node, mediaType = 'data:image/svg+xml') {
       const base64 = btoa(node.outerHTML)
@@ -181,8 +191,8 @@
   function ImportFontAwesome() {
     const range = document.createRange()
     const frag = range.createContextualFragment(`
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/js/all.min.js" integrity="sha512-UwcC/iaz5ziHX7V6LjSKaXgCuRRqbTp1QHpbOJ4l1nw2/boCfZ2KlFIqBUA/uRVF0onbREnY9do8rM/uT/ilqw==" crossorigin="anonymous"/>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/js/all.min.js" crossorigin="anonymous"/>
 `)
     document.querySelector("head").append(frag)
   }
@@ -221,7 +231,7 @@
       ImportFontAwesome()
       const range = document.createRange()
       const iconClass = "far fa-keyboard" // <i class="far fa-keyboard"></i>
-      const iconSizeArray = [16, 32, 48, 128, [384, 256]] // https://developer.chrome.com/docs/extensions/mv3/manifest/icons/
+      const iconSizeArray = [48, 128, 72, 96, 128, 144, 152, 192, 256, 384] // https://developer.chrome.com/docs/extensions/mv3/manifest/icons/
       const fragIcon = range.createContextualFragment(`<i class="${iconClass}" style="background:none;color:#ffce47"></i>`)
       outputElem.append(fragIcon)
 
