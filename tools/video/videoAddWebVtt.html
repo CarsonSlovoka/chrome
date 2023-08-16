@@ -27,7 +27,7 @@
 <body>
 
 <input id="input-video" data-com="fileBtn" placeholder="Select Video" accept="video/mp4,video/webm"> <!-- com: components -->
-<div class="mt-2"><input id="input-caption" data-com="fileBtn" placeholder="Select captions" accept=".vtt"></div> <!-- .srt not supported -->
+<div class="mt-2"><input id="input-caption" data-com="fileBtn" placeholder="Select captions" accept=".vtt,.srt"></div> <!-- .srt not supported -->
 
 <input type="submit" class="mt-2"/>
 <section id="result">
@@ -83,14 +83,37 @@
       const inputVideo = document.getElementById(`input-video`)
       const inputCaption = document.getElementById(`input-caption`)
       const submitBtn = document.querySelector(`input[type="submit"]`)
-      submitBtn.onclick = () => {
+      submitBtn.onclick = async () => {
         const videoFile = inputVideo.files[0]
         const captionFile = inputCaption.files[0]
         if (videoFile === undefined || captionFile === undefined) {
           return
         }
+
+        // 如果是srt字幕，在其表頭添加WEBVTT字眼，將其轉成WebVTT
+        // 比較好的方式是直接檢查整個文本的內容，因為副檔名也有可能會騙人，這是另一種檢查方法: https://stackoverflow.com/a/76911371/9935654
+        const basename =captionFile.name.substring(captionFile.name.lastIndexOf('.'))
+        let blobCaption = new Blob()
+        if (basename.toLowerCase() === ".srt")  {
+          const reader = new FileReader()
+          await new Promise(resolve => {
+            reader.onload = (e) => {
+              const srtText = e.target.result
+              // if (srtText.substring(0, 6) !== "WEBVTT\n") { // WEBVTT後面可以添加其他內容，不一定直接接換行
+              if (srtText.substring(0, 6) !== "WEBVTT") {
+                blobCaption = new Blob(["WEBVTT\n"+srtText], {"type": captionFile.type})
+              } else {
+                blobCaption = new Blob([srtText], {"type": captionFile.type})
+              }
+              resolve()
+            }
+            reader.readAsText(captionFile)
+          })
+        } else {
+          blobCaption = new Blob([captionFile], {"type": captionFile.type})
+        }
+
         const blobVideo = new Blob([videoFile], {"type": videoFile.type})
-        const blobCaption = new Blob([captionFile], {"type": captionFile.type})
 
         const videoBlobURL = URL.createObjectURL(blobVideo)
         const captionBlobURL = URL.createObjectURL(blobCaption)
