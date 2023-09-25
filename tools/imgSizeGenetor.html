@@ -1,11 +1,11 @@
 <title>各種不同尺寸的圖片生成</title>
 
 <style>
-    /* img::after {content: attr(alt)} img屬於replaced elements，而pseudo只能用在replaced elements，所以這種用法無效 */
-    span:has(img)::after {
-        content: attr(title);
-        display: block; /* 這可以讓它移到下面去 */
-    }
+  /* img::after {content: attr(alt)} img屬於replaced elements，而pseudo只能用在replaced elements，所以這種用法無效 */
+  span:has(img)::after {
+    content: attr(title);
+    display: block; /* 這可以讓它移到下面去 */
+  }
 </style>
 
 <div id="drop_zone"
@@ -22,6 +22,7 @@
      ondrop="
      ((e)=>{
          e.preventDefault() // 避免檔案被打開
+         e.target.style.setProperty('background-color', 'initial')
 ;[...e.dataTransfer.items].forEach((item)=>generateImg(item.getAsFile()))
 })(event)"
 
@@ -32,59 +33,60 @@
 <div id="out"></div>
 
 <script>
-    const outElem = document.querySelector("div#out")
+  const outElem = document.querySelector("div#out")
 
-    function generateImg(imgFile) {
-        if (imgFile && imgFile.type !== 'image/png') {
-            console.error(`${file.type} !== image/png`)
-            return
-        }
-
-        outElem.innerHTML = ""
-
-        const reader = new FileReader()
-        reader.onload = (e) => {
-            const img = new Image()
-            img.src = `${e.target.result}` // dataURI
-            img.onload = () => {
-                for (const size of [
-                    [32, 32],
-                    [44, 44],
-                    [50, 50],
-                    [128, 128],
-                    [150, 150],
-                    [256, 256]
-                ]) {
-                    const [w, h] = size
-                    const imgDataURL = resizeImage(img, w, h)
-                    createImgByURI(imgDataURL, w, h)
-                }
-            }
-        }
-        reader.readAsDataURL(imgFile)
+  function generateImg(imgFile) {
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#image_types
+    if (imgFile && !['image/png', 'image/jpeg', 'image/gif', 'image/bmp', 'image/svg+xml', 'image/webp'].includes(imgFile.type)) {
+      console.error(`not support image.type=${imgFile.type}`)
+      return
     }
 
-    function resizeImage(orgImg, newWidth, newHeight) {
-        const canvas = document.createElement('canvas')
-        canvas.width = newWidth
-        canvas.height = newHeight
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(orgImg, 0, 0, newWidth, newHeight)
-        return canvas.toDataURL('image/png')
-    }
+    outElem.innerHTML = ""
 
-    function createImgByURI(imgDataURI, width, height) {
-        const downloadName = `${width}x${height}.png`
-        const frag = document.createRange().createContextualFragment(`
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.src = `${e.target.result}` // dataURI
+      img.onload = () => {
+        for (const size of [
+          [32, 32],
+          [44, 44],
+          [50, 50],
+          [128, 128],
+          [150, 150],
+          [256, 256]
+        ]) {
+          const [w, h] = size
+          const imgDataURL = resizeImage(img, w, h)
+          createImgByURI(imgDataURL, w, h)
+        }
+      }
+    }
+    reader.readAsDataURL(imgFile)
+  }
+
+  function resizeImage(orgImg, newWidth, newHeight) {
+    const canvas = document.createElement('canvas')
+    canvas.width = newWidth
+    canvas.height = newHeight
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(orgImg, 0, 0, newWidth, newHeight)
+    return canvas.toDataURL('image/png')
+  }
+
+  function createImgByURI(imgDataURI, width, height) {
+    const downloadName = `${width}x${height}.png`
+    const frag = document.createRange().createContextualFragment(`
 <span title="${downloadName}">
 <img width="${width}" height="${height}" src="${imgDataURI}" alt="${downloadName}"/>
 </span>`)
-        frag.querySelector(`img`).onclick = () => {
-            const a = document.createElement('a')
-            a.href = imgDataURI
-            a.download = downloadName
-            a.click()
-        }
-        outElem.append(frag)
+    frag.querySelector(`img`).onclick = () => {
+      const a = document.createElement('a')
+      a.href = imgDataURI
+      a.download = downloadName
+      a.click()
     }
+    outElem.append(frag)
+  }
 </script>
