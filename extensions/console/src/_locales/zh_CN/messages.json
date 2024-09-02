@@ -218,6 +218,10 @@
     "message": "推荐选项！预设值为:25",
     "description": "Recommended option! Default is 25."
   },
+  "CMDVideoRECOptionsMimeType": {
+    "message": "輸出格式: video/mp4, video/webm",
+    "description": "Recommended option! Default is video/mp4."
+  },
   "CMDBM": {
     "message": "您可以使用此指令来快速地打开书签的连结",
     "description": "You can use this command to help you quickly open the URL of the bookmark that you made."

@@ -186,7 +186,8 @@ class CommandCenter {
             [`<kbd data-click-typing='video -rec -controller'>video -rec -controller</kbd>`, chrome.i18n.getMessage("CMDVideoRECController")],
             [`<kbd data-click-typing='video -rec -width=200 -height=200 -fps=1'>video -rec -width=200 -height=200 -fps=1</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptions")],
             [`<kbd data-click-typing='video -rec -w=200 -h=200 -f=1'>video -rec -w=200 -h=200 -f=1</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptions")],
-            [`<kbd data-click-typing='video -rec -f=1'>video -rec -f=1</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptionsFPS")]
+            [`<kbd data-click-typing='video -rec -f=1'>video -rec -f=1</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptionsFPS")],
+            [`<kbd data-click-typing='video -rec -f=1 -mediaType=video/mp4'>video -rec -f=1 -mediaType=video/mp4</kbd>`, chrome.i18n.getMessage("CMDVideoRECOptionsMimeType")],
           ])
         }
 
@@ -210,6 +211,7 @@ class CommandCenter {
           const videoOptions = {
             width: argObj.width ?? argObj.w,
             height: argObj.height ?? argObj.h,
+            mediaType: argObj.mediaType ?? argObj.t ?? "video/mp4",
             fps: argObj.fps ?? argObj.f ?? 25,
             display: argObj.display ?? true,
             debug: argObj.debug ?? false,

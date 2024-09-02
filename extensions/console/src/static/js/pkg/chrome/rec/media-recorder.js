@@ -2,14 +2,15 @@ class CanvasRecord {
   /**
    * @param {HTMLCanvasElement} canvas
    * @param {Number} fps
-   * @param {string} mediaType: video/mp4, video/webm, ...
+   * @param {String} mediaType video/mp4, video/webm, ...
    * */
   constructor(canvas, fps, mediaType) {
     this.canvas = canvas
     const stream = canvas.captureStream(fps) // fps // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream
     this.mediaRecorder = new MediaRecorder(stream, { // https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/MediaRecorder
       // audioBitsPerSecond : 128000,
-      // videoBitsPerSecond : 2500000,
+      videoBitsPerSecond: 2500000, // 如果太低畫面滾動太快，畫面會跑掉
+      // videoBitsPerSecond: 5000000, // 5 Mbps
       // bitsPerSecond:2500000,
       mimeType: mediaType,
     })
@@ -75,18 +76,20 @@ export class RTCMediaRecorder { // real time communicate
    * @param {Number} width
    * @param {Number} height
    * @param {Number} fps
+   * @param {String} mimeType output mimeType
    * @param {boolean} display
    * @param {boolean} debug  show settings and constraint
    * */
   constructor(parentNode,
               {
                 width = undefined, height = undefined, fps = 25,
+                mimeType = "video/mp4",
                 display = true,
                 debug = false,
               }) {
     this.#parentNode = parentNode
     this.#constraints = {
-      width, height, fps,
+      width, height, fps, mimeType,
       display,
       debug
     }
@@ -117,7 +120,7 @@ export class RTCMediaRecorder { // real time communicate
     this.#parentNode.append(frag)
   }
 
-  async StartRecordingMedia(videoElement = undefined) {
+  async StartRecordingMedia(videoElement = undefined, mimeType="video/mp4") {
     const mediaStream = await navigator.mediaDevices.getDisplayMedia({
       video: {
         // width: {ideal: 600, max: 1920 },
@@ -161,7 +164,7 @@ export class RTCMediaRecorder { // real time communicate
     const chunks = []
     const videoStream = video.captureStream()
     const mediaRecorder = new MediaRecorder(videoStream, {
-      // mimeType : "video/webm",
+      mimeType
     })
 
     mediaRecorder.ondataavailable = e => {
@@ -179,7 +182,7 @@ export class RTCMediaRecorder { // real time communicate
 <source src="${blobURL}">
 </video>
 <div>
-<a href="${blobURL}" download="result.webm"><button class="btn btn-primary">result.webm</button></a>
+<a href="${blobURL}" download="result.${mimeType.split('/')[1]}"><button class="btn btn-primary">result.${mimeType.split('/')[1]}</button></a>
 <button id="release" class="ms-3 btn btn-primary">${chrome.i18n.getMessage("ReleaseResource")}</button>
 </div>
 
@@ -228,6 +231,10 @@ export class RTCMediaRecorder { // real time communicate
       <br>
       <input id="fps" type="number" min="0" class="mt-2" placeholder="${chrome.i18n.getMessage("FPS")}">
       <br>
+      <select id="mimeType">
+        <option value="video/mp4">mp4</option>
+        <option value="video/webm">webm</option>
+      </select><br>
       <fieldset id="options">
         <input id="debug" type="checkbox"><label>debug (show the information of media)</label><br>
         <input id="display" type="checkbox" checked><label>display</label>
@@ -296,10 +303,11 @@ export class RTCMediaRecorder { // real time communicate
 
       const rtc = new RTCMediaRecorder(resultElem, {
         width: video.clientWidth, height: video.clientHeight,
+        mimeType: form.mimeType.value,
         fps, display, debug
       })
       try {
-        const mediaRecorder = await rtc.StartRecordingMedia(video)
+        const mediaRecorder = await rtc.StartRecordingMedia(video, form.mimeType.value)
 
         mediaRecorder.addEventListener(`stop`, () => {
           fieldsetSettings.disabled = false
@@ -366,7 +374,7 @@ export class RTCMediaRecorder { // real time communicate
       }
       const canvas = document.createElement(`canvas`)
       // this.#drawVideo2Canvas(video, fps, canvas)
-      const canvasREC = new CanvasRecord(canvas, this.#constraints.fps, "video/webm") // ;codecs=vp9
+      const canvasREC = new CanvasRecord(canvas, this.#constraints.fps, this.#constraints.mimeType) // ;codecs=vp9
 
       video.onloadedmetadata = (e) => {
         video.width = this.#constraints.width ?? video.clientWidth
@@ -407,7 +415,7 @@ export class RTCMediaRecorder { // real time communicate
 <source src="${blobURL}" type="video/mp4">
 </video>
 <div>
-<a href="${blobURL}" download="result.webm"><button class="btn btn-primary">result.webm</button></a>
+<a href="${blobURL}" download="result.${form.mimeType.value.split('/')[1]}"><button class="btn btn-primary">result${form.mimeType.value.split('/')[1]}</button></a>
 <button data-name="release" class="ms-3 btn btn-primary">${chrome.i18n.getMessage("ReleaseResource")}</button>
 </div>`)
         // frag.querySelector(`source`).type = 'video/webm' //canvasREC.mediaRecorder.mimeType
