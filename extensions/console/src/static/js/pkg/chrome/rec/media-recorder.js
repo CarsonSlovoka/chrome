@@ -3,14 +3,16 @@ class CanvasRecord {
    * @param {HTMLCanvasElement} canvas
    * @param {Number} fps
    * @param {String} mediaType video/mp4, video/webm, ...
+   * @param {Number} vbps videoBitsPerSecond
    * */
-  constructor(canvas, fps, mediaType) {
+  constructor(canvas, fps, mediaType,
+              vbps=2500000 // 2.5 Mbps
+  ) {
     this.canvas = canvas
     const stream = canvas.captureStream(fps) // fps // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream
     this.mediaRecorder = new MediaRecorder(stream, { // https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/MediaRecorder
       // audioBitsPerSecond : 128000,
-      videoBitsPerSecond: 2500000, // 如果太低畫面滾動太快，畫面會跑掉
-      // videoBitsPerSecond: 5000000, // 5 Mbps
+      videoBitsPerSecond: Number(vbps),
       // bitsPerSecond:2500000,
       mimeType: mediaType,
     })
@@ -76,6 +78,7 @@ export class RTCMediaRecorder { // real time communicate
    * @param {Number} width
    * @param {Number} height
    * @param {Number} fps
+   * @param {Number} vbps videoBitsPerSecond
    * @param {String} mimeType output mimeType
    * @param {boolean} display
    * @param {boolean} debug  show settings and constraint
@@ -83,13 +86,14 @@ export class RTCMediaRecorder { // real time communicate
   constructor(parentNode,
               {
                 width = undefined, height = undefined, fps = 25,
-                mimeType = "video/mp4",
+                vbps = 2500000, mimeType = "video/mp4",
+
                 display = true,
                 debug = false,
               }) {
     this.#parentNode = parentNode
     this.#constraints = {
-      width, height, fps, mimeType,
+      width, height, fps, vbps, mimeType,
       display,
       debug
     }
@@ -229,7 +233,8 @@ export class RTCMediaRecorder { // real time communicate
       <input id="width" type="number" max="9999" placeholder="${chrome.i18n.getMessage("Width")}">
       <input id="height" type="number" max="9999" placeholder="${chrome.i18n.getMessage("Height")}">
       <br>
-      <input id="fps" type="number" min="0" class="mt-2" placeholder="${chrome.i18n.getMessage("FPS")}">
+      <input id="fps" type="number" min="0" class="mt-2" placeholder="${chrome.i18n.getMessage("FPS")}" value="25">
+      <input id="vbps" type="number" min="0" class="mt-2" placeholder="${chrome.i18n.getMessage("VBPS")}" value="2500000">
       <br>
       <select id="mimeType">
         <option value="video/mp4">mp4</option>
@@ -304,6 +309,7 @@ export class RTCMediaRecorder { // real time communicate
       const rtc = new RTCMediaRecorder(resultElem, {
         width: video.clientWidth, height: video.clientHeight,
         mimeType: form.mimeType.value,
+        vbps: form.vbps.value,
         fps, display, debug
       })
       try {
@@ -374,7 +380,10 @@ export class RTCMediaRecorder { // real time communicate
       }
       const canvas = document.createElement(`canvas`)
       // this.#drawVideo2Canvas(video, fps, canvas)
-      const canvasREC = new CanvasRecord(canvas, this.#constraints.fps, this.#constraints.mimeType) // ;codecs=vp9
+      const canvasREC = new CanvasRecord(canvas, this.#constraints.fps,
+        this.#constraints.mimeType, // ;codecs=vp9
+        this.#constraints.vbps,
+      )
 
       video.onloadedmetadata = (e) => {
         video.width = this.#constraints.width ?? video.clientWidth

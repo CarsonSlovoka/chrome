@@ -32,6 +32,10 @@
     "message": "FPS",
     "description": "FPS"
   },
+  "VBPS": {
+    "message": "VideoBitsPerSecond",
+    "description": "VideoBitsPerSecond"
+  },
   "Start": {
     "message": "Start",
     "description": "Start"

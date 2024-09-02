@@ -32,6 +32,10 @@
     "message": "每秒幾幀",
     "description": "FPS"
   },
+  "VBPS": {
+    "message": "視訊比特率",
+    "description": "VideoBitsPerSecond"
+  },
   "Start": {
     "message": "開始",
     "description": "Start"
